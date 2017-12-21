@@ -15,6 +15,7 @@ public class TaskInfo{
 
     private String granularity; //任务粒度 Y：年 HY：半年 S：季 M：月 D：天 W:周
     private Long exec_delay;    //任务执行延迟 单位：秒
+    private Boolean isDependTime;//是否时间依赖
 
     private Date createtime;    //任务创建时间
     private Date updatetime;    //任务更新时间
@@ -22,6 +23,18 @@ public class TaskInfo{
 
 
     //--- getter and setter  ---//
+    /**
+     * @return the isDependTime
+     */
+    public Boolean getIsDependTime() {
+        return isDependTime;
+    }
+    /**
+     * @param isDependTime the isDependTime to set
+     */
+    public void setIsDependTime(Boolean isDependTime) {
+        this.isDependTime = isDependTime;
+    }
     /**
      * @return the task_type
      */

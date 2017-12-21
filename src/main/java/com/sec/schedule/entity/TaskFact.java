@@ -2,14 +2,14 @@ package com.sec.schedule.entity;
 
 import java.util.Date;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+
+import com.sec.schedule.model.CompositeIdTaskFact;
 
 @Entity(name="task_fact")
 public class TaskFact{
-    @Id
-    private String stat_dt;  //计算日期
-    private String taskId;   //任务id
+    private CompositeIdTaskFact id;  //计算日期
     private String task_type;//任务类型
     private String granularity;//粒度
 
@@ -22,6 +22,19 @@ public class TaskFact{
 
 
     //-- getter and setter --//
+    /**
+     * @return the id
+     */
+    @EmbeddedId
+    public CompositeIdTaskFact getId() {
+        return id;
+    }
+    /**
+     * @param id the id to set
+     */
+    public void setId(CompositeIdTaskFact id) {
+        this.id = id;
+    }
     /**
      * @return the allow_cal_time
      */
@@ -53,12 +66,6 @@ public class TaskFact{
         return granularity;
     }
     /**
-     * @return the stat_dt
-     */
-    public String getStat_dt() {
-        return stat_dt;
-    }
-    /**
      * @return the status
      */
     public String getStatus() {
@@ -69,12 +76,6 @@ public class TaskFact{
      */
     public String getTask_type() {
         return task_type;
-    }
-    /**
-     * @return the taskId
-     */
-    public String getTaskId() {
-        return taskId;
     }
     /**
      * @param allow_cal_time the allow_cal_time to set
@@ -107,12 +108,6 @@ public class TaskFact{
         this.granularity = granularity;
     }
     /**
-     * @param stat_dt the stat_dt to set
-     */
-    public void setStat_dt(String stat_dt) {
-        this.stat_dt = stat_dt;
-    }
-    /**
      * @param status the status to set
      */
     public void setStatus(String status) {
@@ -123,11 +118,5 @@ public class TaskFact{
      */
     public void setTask_type(String task_type) {
         this.task_type = task_type;
-    }
-    /**
-     * @param taskId the taskId to set
-     */
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
     }
 }

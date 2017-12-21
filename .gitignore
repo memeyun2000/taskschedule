@@ -1,0 +1,10 @@
+# vscode
+.settings
+.classpath
+.project
+
+# maven
+target
+
+# derby
+derby.log

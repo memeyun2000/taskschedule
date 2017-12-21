@@ -20,6 +20,7 @@ public class JobSchedule{
     }
 
     /**
+     * 消费者
      * 寻找需要执行的任务 并把需要执行的任务放入任务执行器中执行
      */
     @Scheduled(fixedRate=5000)
@@ -38,5 +39,14 @@ public class JobSchedule{
             taskQueue.put(new TaskFact());
             System.out.println("找到需要计算的任务");
         }
+    }
+
+    /**
+     * 生产者
+     * 生成每日的任务列表到taskfact表
+     */
+    @Scheduled(fixedRate=6000)
+    public void jobScheduleGenerate() throws Exception{
+
     }
 }

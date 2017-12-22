@@ -11,10 +11,10 @@ public class TaskInfo{
     private String taskId;    //任务id
     private String taskname;  //任务名称
     private String descr;     //任务描述
-    private String task_type;  //任务类型
+    private String taskType;  //任务类型
 
     private String granularity; //任务粒度 Y：年 HY：半年 S：季 M：月 D：天 W:周
-    private Long exec_delay;    //任务执行延迟 单位：秒
+    private Long execDelay;    //任务执行延迟 单位：秒
     private Boolean isDependTime;//是否时间依赖
 
     private Date createtime;    //任务创建时间
@@ -36,18 +36,6 @@ public class TaskInfo{
         this.isDependTime = isDependTime;
     }
     /**
-     * @return the task_type
-     */
-    public String getTask_type() {
-        return task_type;
-    }
-    /**
-     * @param task_type the task_type to set
-     */
-    public void setTask_type(String task_type) {
-        this.task_type = task_type;
-    }
-    /**
      * @param createtime the createtime to set
      */
     public void setCreatetime(Date createtime) {
@@ -58,12 +46,6 @@ public class TaskInfo{
      */
     public void setDescr(String descr) {
         this.descr = descr;
-    }
-    /**
-     * @param exec_delay the exec_delay to set
-     */
-    public void setExec_delay(Long exec_delay) {
-        this.exec_delay = exec_delay;
     }
     /**
      * @param granularity the granularity to set
@@ -102,12 +84,6 @@ public class TaskInfo{
         return descr;
     }
     /**
-     * @return the exec_delay
-     */
-    public Long getExec_delay() {
-        return exec_delay;
-    }
-    /**
      * @return the granularity
      */
     public String getGranularity() {
@@ -131,4 +107,29 @@ public class TaskInfo{
     public Date getUpdatetime() {
         return updatetime;
     }
+    /**
+     * @return the execDelay
+     */
+    public Long getExecDelay() {
+        return execDelay;
+    }
+    /**
+     * @return the taskType
+     */
+    public String getTaskType() {
+        return taskType;
+    }
+    /**
+     * @param execDelay the execDelay to set
+     */
+    public void setExecDelay(Long execDelay) {
+        this.execDelay = execDelay;
+    }
+    /**
+     * @param taskType the taskType to set
+     */
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
+    
 }

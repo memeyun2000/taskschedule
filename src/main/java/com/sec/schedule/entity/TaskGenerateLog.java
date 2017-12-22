@@ -3,13 +3,14 @@ package com.sec.schedule.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * 任务生成日期
  */
 @Entity(name="task_generate_log")
 public class TaskGenerateLog {
-    
+    @Id
     private String statDt;    //数据日期
     private Boolean status;   //任务是否生成
     private Date createTime;

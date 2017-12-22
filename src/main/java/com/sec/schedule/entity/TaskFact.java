@@ -10,12 +10,12 @@ import com.sec.schedule.model.CompositeIdTaskFact;
 @Entity(name="task_fact")
 public class TaskFact{
     private CompositeIdTaskFact id;  //计算日期
-    private String task_type;//任务类型
+    private String taskType;//任务类型
     private String granularity;//粒度
 
-    private Date allow_cal_time;  //允许计算的时间开始日期，在此日期之前不能计算任务
-    private Date cal_begin_time;  //计算 开始时间
-    private Date cal_end_time;    //计算 结束时间
+    private Date allowCalTime;  //允许计算的时间开始日期，在此日期之前不能计算
+    private Date calBeginTime;  //计算 开始时间
+    private Date calEndTime;    //计算 结束时间
     private Date createtime;      //任务 创建时间
 
     private String status;   //0：失败 1:计算条件不充分 2:准备计算 3:正在计算 4:计算完成
@@ -35,24 +35,7 @@ public class TaskFact{
     public void setId(CompositeIdTaskFact id) {
         this.id = id;
     }
-    /**
-     * @return the allow_cal_time
-     */
-    public Date getAllow_cal_time() {
-        return allow_cal_time;
-    }
-    /**
-     * @return the cal_begin_time
-     */
-    public Date getCal_begin_time() {
-        return cal_begin_time;
-    }
-    /**
-     * @return the cal_end_time
-     */
-    public Date getCal_end_time() {
-        return cal_end_time;
-    }
+    
     /**
      * @return the createtime
      */
@@ -71,30 +54,7 @@ public class TaskFact{
     public String getStatus() {
         return status;
     }
-    /**
-     * @return the task_type
-     */
-    public String getTask_type() {
-        return task_type;
-    }
-    /**
-     * @param allow_cal_time the allow_cal_time to set
-     */
-    public void setAllow_cal_time(Date allow_cal_time) {
-        this.allow_cal_time = allow_cal_time;
-    }
-    /**
-     * @param cal_begin_time the cal_begin_time to set
-     */
-    public void setCal_begin_time(Date cal_begin_time) {
-        this.cal_begin_time = cal_begin_time;
-    }
-    /**
-     * @param cal_end_time the cal_end_time to set
-     */
-    public void setCal_end_time(Date cal_end_time) {
-        this.cal_end_time = cal_end_time;
-    }
+    
     /**
      * @param createtime the createtime to set
      */
@@ -114,9 +74,51 @@ public class TaskFact{
         this.status = status;
     }
     /**
-     * @param task_type the task_type to set
+     * @return the allowCalTime
      */
-    public void setTask_type(String task_type) {
-        this.task_type = task_type;
+    public Date getAllowCalTime() {
+        return allowCalTime;
+    }
+    /**
+     * @return the calBeginTime
+     */
+    public Date getCalBeginTime() {
+        return calBeginTime;
+    }
+    /**
+     * @return the calEndTime
+     */
+    public Date getCalEndTime() {
+        return calEndTime;
+    }
+    /**
+     * @return the taskType
+     */
+    public String getTaskType() {
+        return taskType;
+    }
+    /**
+     * @param allowCalTime the allowCalTime to set
+     */
+    public void setAllowCalTime(Date allowCalTime) {
+        this.allowCalTime = allowCalTime;
+    }
+    /**
+     * @param calBeginTime the calBeginTime to set
+     */
+    public void setCalBeginTime(Date calBeginTime) {
+        this.calBeginTime = calBeginTime;
+    }
+    /**
+     * @param calEndTime the calEndTime to set
+     */
+    public void setCalEndTime(Date calEndTime) {
+        this.calEndTime = calEndTime;
+    }
+    /**
+     * @param taskType the taskType to set
+     */
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
     }
 }

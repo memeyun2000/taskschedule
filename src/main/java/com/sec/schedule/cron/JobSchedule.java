@@ -52,7 +52,7 @@ public class JobSchedule {
      * 生产者
      * 生成每日的任务列表到taskfact表
      */
-    @Scheduled(fixedRate = 6000)
+    @Scheduled(fixedRate = 10000)
     public void jobScheduleGenerate() throws Exception {
         taskGenerateService.execute();
     }

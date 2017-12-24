@@ -35,7 +35,7 @@ public class TaskGenerateService {
 
     public void execute(){
 
-        // 获取最大未生成任务的日期
+        // 获取最小未生成任务的日期
         String _minStatusFalseStatDt = taskGenerateLogDao.findMinStatDtByStatus(false);
         // 前置检查 检查日期是否满足生成条件
         if(!isStatDtGenerate(_minStatusFalseStatDt)) {
@@ -59,7 +59,7 @@ public class TaskGenerateService {
         // 最小未生成任务日期 大于 t+3 则 不用生成任务
         // 超过三天 
         if(DateUtils.diffTowDate(DateUtils.stringToDateShort(statDt), 
-                                 DateUtils.addDate(new Date(), "d", GENER_TASK_DATE_NUM)) > 0) {
+                                 DateUtils.addDate(new Date(), "d", GENER_TASK_DATE_NUM - 1)) > 0) {
             System.out.println("没有任务需要生成，休息");
             return false;
         }
@@ -73,6 +73,7 @@ public class TaskGenerateService {
      */
     private void createGenerateDtStatusFalse() {
         String _maxDt = taskGenerateLogDao.findMaxStatDt();
+        _maxDt = DateUtils.dateStrAddDay(_maxDt, 1);
         createGenerateDtStatusFalse(_maxDt);
     }
 
@@ -82,7 +83,7 @@ public class TaskGenerateService {
      */
     private void createGenerateDtStatusFalse(String statDt){
         //不能超过的最大生成日期 不能超过今天 + x 
-        String _maxStatDt = DateUtils.dateStrAddDay(DateUtils.getCurrentDateStr(), GENER_TASK_DATE_NUM);
+        String _maxStatDt = DateUtils.dateStrAddDay(DateUtils.getCurrentDateStr(), GENER_TASK_DATE_NUM + 1);
         //生成日期
         String _statDt = statDt;
         List<TaskGenerateLog> tasklogList = new ArrayList<TaskGenerateLog>();
@@ -103,14 +104,9 @@ public class TaskGenerateService {
      * 逻辑： 把taskinfo 拷贝一份副本到 taskfact
      */
     private void generateTask(String statDt) {
-        //任务已生成 则更新生成状态 只要当天有一个任务已生成 则不生成任务
-        if(taskFactDao.findCountByStatDt(statDt) > 0 ) {
-            return;
-        }
 
-
-        //生成任务
-        List<TaskInfo> taskInfoList = taskInfoDao.findAll();
+        //生成任务 生成当天已未生成的任务，已生成的任务就不生成了
+        List<TaskInfo> taskInfoList = taskInfoDao.findOutGenerateTask(statDt);
         List<TaskFact> taskFactList = new ArrayList<TaskFact>();
         Date statDateTime = DateUtils.StringToDateTime(statDt);
 
@@ -139,9 +135,10 @@ public class TaskGenerateService {
         taskFactDao.save(taskFactList);
 
         //更新生成状态
-        TaskGenerateLog taskGenerateLog = new TaskGenerateLog();
-        taskGenerateLog.setStatDt(statDt);
+        System.out.println("更新状态");
+        TaskGenerateLog taskGenerateLog = taskGenerateLogDao.findOne(statDt);
         taskGenerateLog.setStatus(true);
+        taskGenerateLog.setUpdateTime(new Date());
         taskGenerateLogDao.save(taskGenerateLog);
         System.out.println("任务日期："+ statDt +",已生成");
     }

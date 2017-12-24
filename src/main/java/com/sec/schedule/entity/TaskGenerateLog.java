@@ -14,7 +14,21 @@ public class TaskGenerateLog {
     private String statDt;    //数据日期
     private Boolean status;   //任务是否生成
     private Date createTime;
-    
+    private Date updateTime;
+
+
+    /**
+     * @return the updateTime
+     */
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+    /**
+     * @param updateTime the updateTime to set
+     */
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
     /**
      * @return the createTime
      */

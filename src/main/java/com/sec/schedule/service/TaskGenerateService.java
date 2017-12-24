@@ -115,6 +115,7 @@ public class TaskGenerateService {
             String taskType = taskInfo.getTaskType();
             Long execDelay = taskInfo.getExecDelay();
             String granularity = taskInfo.getGranularity();
+            Boolean isDependTime = taskInfo.getIsDependTime();
 
             TaskFact taskfact = new TaskFact();
             CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
@@ -123,6 +124,7 @@ public class TaskGenerateService {
             taskfact.setId(taskFactId);
             taskfact.setTaskType(taskType);
             taskfact.setCreatetime(new Date());
+            taskfact.setIsDependTime(isDependTime);
 
             Date allowCalTime = DateUtils.addDate(statDateTime, "s", execDelay.intValue());
             taskfact.setAllowCalTime(allowCalTime);

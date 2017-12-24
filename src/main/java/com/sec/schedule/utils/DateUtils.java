@@ -31,6 +31,10 @@ public class DateUtils {
         Date _date = stringToDateShort(dateStr);
         return formatDate(addDate(_date, "d", day), "yyyy-MM-dd");
     }
+    public static String dateStrAddDate(String dateStr,String type ,int iQuantity) {
+        Date _date = stringToDateShort(dateStr);
+        return formatDate(addDate(_date, type, iQuantity), "yyyy-MM-dd");
+    }
     
     public static Date stringToDate(String dateStr,String format){
         ParsePosition pos = new ParsePosition(0);

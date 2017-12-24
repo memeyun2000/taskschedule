@@ -17,11 +17,24 @@ public class TaskFact{
     private Date calBeginTime;  //计算 开始时间
     private Date calEndTime;    //计算 结束时间
     private Date createtime;      //任务 创建时间
+    private Boolean isDependTime;
 
     private String status;   //0：失败 1:计算条件不充分 2:准备计算 3:正在计算 4:计算完成
 
 
     //-- getter and setter --//
+    /**
+     * @return the isDependTime
+     */
+    public Boolean getIsDependTime() {
+        return isDependTime;
+    }
+    /**
+     * @param isDependTime the isDependTime to set
+     */
+    public void setIsDependTime(Boolean isDependTime) {
+        this.isDependTime = isDependTime;
+    }
     /**
      * @return the id
      */

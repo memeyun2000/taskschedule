@@ -13,6 +13,7 @@ import com.sec.schedule.model.CompositeIdTaskFact;
 import com.sec.schedule.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -59,8 +60,11 @@ public class TaskExecuteService{
         List<TaskDepend> taskDependList = taskDependDao.findAll();
         //涉及到的任务依赖 时间依赖的 任务
         Map<CompositeIdTaskFact,String> dependTaskFactMap;
-
         List<String> tmpDtList = getDependStatDtList(status2TaskFactList);
+        if(tmpDtList.size() <=0 ) {
+            //没有任务，不执行操作
+            return;
+        }
         dependTaskFactMap = taskFactDao.findTaskFactListByStatDts(tmpDtList)
                                         .stream()
                                         .collect(Collectors.toMap(TaskFact::getId, TaskFact::getStatus));
@@ -80,16 +84,20 @@ public class TaskExecuteService{
             .filter(taskfact -> {
                 String taskId = taskfact.getId().getTaskId();
                 String statDt = taskfact.getId().getStatDt();
+                //执行时间不满足条件
+                if(DateUtils.diffTowDate(taskfact.getAllowCalTime(), new Date()) > 0 ) {
+                    return false;
+                }
+
 
                 //判断任务依赖
                 List<TaskDepend> dependTaskList = taskDependMap.getOrDefault(taskId, new ArrayList<TaskDepend>());
-                
                 //找到任务依赖的任务是否有未执行完的
                 long dependTaskStatus2count = dependTaskList
                     .stream()
                     .filter(dependTask -> {
                         CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
-                        taskFactId.setStatDt(taskfact.getId().getStatDt());
+                        taskFactId.setStatDt(statDt);
                         taskFactId.setTaskId(dependTask.getId().getTaskId());
                         return !dependTaskFactMap.getOrDefault(taskFactId, "4").equals("4");
                     }).count();
@@ -101,13 +109,13 @@ public class TaskExecuteService{
                 String taskGranularity = taskTimeDependMap.getOrDefault(taskId, "");
                 String timeDependDateStr = "";
                 if(taskGranularity.equalsIgnoreCase("Y")) {
-                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "y", -1);
+                    timeDependDateStr = DateUtils.dateStrAddDate(statDt, "y", -1);
                 } else if(taskGranularity.equalsIgnoreCase("S")) {
-                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "s", -1);
+                    timeDependDateStr = DateUtils.dateStrAddDate(statDt, "s", -1);
                 } else if(taskGranularity.equalsIgnoreCase("M")) {
-                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "m", -1);
+                    timeDependDateStr = DateUtils.dateStrAddDate(statDt, "m", -1);
                 } else if(taskGranularity.equalsIgnoreCase("D")) {
-                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "d", -1);
+                    timeDependDateStr = DateUtils.dateStrAddDate(statDt, "d", -1);
                 }
                 CompositeIdTaskFact taskFactId2 = new CompositeIdTaskFact();
                 taskFactId2.setStatDt(timeDependDateStr);
@@ -116,7 +124,8 @@ public class TaskExecuteService{
                     return false;
                 }
                 return true;
-            }).collect(Collectors.toList());
+            }).sorted((task1,task2) -> new Long(DateUtils.diffTowDate(task1.getAllowCalTime(), task2.getAllowCalTime())).intValue() )
+            .collect(Collectors.toList());
 
         //放入任务执行队列中
         for (TaskFact taskFact : taskfactReadyCalList) {

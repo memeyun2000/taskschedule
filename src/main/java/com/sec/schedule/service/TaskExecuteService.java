@@ -3,14 +3,18 @@ package com.sec.schedule.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.sec.schedule.cron.JobExecutorImpl;
+import com.sec.schedule.dao.TaskDependDao;
 import com.sec.schedule.dao.TaskFactDao;
+import com.sec.schedule.dao.TaskInfoDao;
 import com.sec.schedule.entity.TaskDepend;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.entity.TaskInfo;
+import com.sec.schedule.model.CompositeIdTaskFact;
 import com.sec.schedule.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,12 @@ public class TaskExecuteService{
 
     @Autowired
     private TaskFactDao taskFactDao;
+
+    @Autowired
+    private TaskDependDao taskDependDao;
+
+    @Autowired
+    private TaskInfoDao taskInfoDao;
     
     public void execute(BlockingQueue<TaskFact> taskQueue) throws Exception{
         //计算队列不为空，放入计算任务
@@ -40,26 +50,83 @@ public class TaskExecuteService{
 
 
     //计算满足依赖可以执行的任务
-    private void calculateReadyTask(BlockingQueue<TaskFact> taskQueue) {
+    private void calculateReadyTask(BlockingQueue<TaskFact> taskQueue) throws Exception {
         //未执行的任务列表
-        List<TaskFact> status2TaskFactList;
+        List<TaskFact> status2TaskFactList = taskFactDao.findByStatus("2");
         //任务列表 含时间依赖信息
-        List<TaskInfo> taskInfoList;
+        List<TaskInfo> taskInfoList = taskInfoDao.findAll();
         //任务依赖信息
-        List<TaskDepend> taskDependList;
-        //涉及到的任务依赖 时间依赖的 已计算完成的任务
-        List<TaskFact> dependTaskFactList;
+        List<TaskDepend> taskDependList = taskDependDao.findAll();
+        //涉及到的任务依赖 时间依赖的 任务
+        Map<CompositeIdTaskFact,String> dependTaskFactMap;
 
-        status2TaskFactList = taskFactDao.findByStatus("2");
         List<String> tmpDtList = getDependStatDtList(status2TaskFactList);
-        dependTaskFactList = taskFactDao.findTaskFactListByStatDts(tmpDtList);
+        dependTaskFactMap = taskFactDao.findTaskFactListByStatDts(tmpDtList)
+                                        .stream()
+                                        .collect(Collectors.toMap(TaskFact::getId, TaskFact::getStatus));
+
+        //任务依赖转换为Map方便查询
+        Map<String,List<TaskDepend>> taskDependMap = taskDependList
+            .stream()
+            .collect(Collectors.groupingBy(depend -> depend.getId().getTaskId() , Collectors.toList()));
+        //时间依赖转换为Map方便查询
+        Map<String,String> taskTimeDependMap = taskInfoList
+            .stream()
+            .filter(taskinfo -> taskinfo.getIsDependTime() == true)
+            .collect(Collectors.toMap(TaskInfo::getTaskId, TaskInfo::getGranularity));
+
+        // 循环待执行任务列表 找到满足依赖的任务
+        List<TaskFact> taskfactReadyCalList = status2TaskFactList.stream()
+            .filter(taskfact -> {
+                String taskId = taskfact.getId().getTaskId();
+                String statDt = taskfact.getId().getStatDt();
+
+                //判断任务依赖
+                List<TaskDepend> dependTaskList = taskDependMap.getOrDefault(taskId, new ArrayList<TaskDepend>());
+                
+                //找到任务依赖的任务是否有未执行完的
+                long dependTaskStatus2count = dependTaskList
+                    .stream()
+                    .filter(dependTask -> {
+                        CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
+                        taskFactId.setStatDt(taskfact.getId().getStatDt());
+                        taskFactId.setTaskId(dependTask.getId().getTaskId());
+                        return !dependTaskFactMap.getOrDefault(taskFactId, "4").equals("4");
+                    }).count();
+                if (dependTaskStatus2count > 0) {
+                    return false ;
+                }
+
+                //判断时间依赖
+                String taskGranularity = taskTimeDependMap.getOrDefault(taskId, "");
+                String timeDependDateStr = "";
+                if(taskGranularity.equalsIgnoreCase("Y")) {
+                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "y", -1);
+                } else if(taskGranularity.equalsIgnoreCase("S")) {
+                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "s", -1);
+                } else if(taskGranularity.equalsIgnoreCase("M")) {
+                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "m", -1);
+                } else if(taskGranularity.equalsIgnoreCase("D")) {
+                    timeDependDateStr = DateUtils.dateStrAddDate(taskfact.getId().getStatDt(), "d", -1);
+                }
+                CompositeIdTaskFact taskFactId2 = new CompositeIdTaskFact();
+                taskFactId2.setStatDt(timeDependDateStr);
+                taskFactId2.setTaskId(taskId);
+                if( !dependTaskFactMap.getOrDefault(taskFactId2, "4").equals("4")){
+                    return false;
+                }
+                return true;
+            }).collect(Collectors.toList());
+
+        //放入任务执行队列中
+        for (TaskFact taskFact : taskfactReadyCalList) {
+            taskQueue.put(taskFact);
+        }
     }
 
     public List<String> getDependStatDtList(List<TaskFact> taskFactList) {
-        // List l = taskFactList.stream().map(task -> task.getStatus());
         List<String> statDtList = taskFactList
             .stream()
-            // .map(task ->  task.getId().getStatDt() + "" + task.getGranularity())
             .map(task -> {
                 List<String> tmp = new ArrayList<String>();
                 tmp.add(task.getId().getStatDt());
@@ -88,8 +155,6 @@ public class TaskExecuteService{
             .distinct()
             .collect(Collectors.toList());
             
-            // .map(granularity -> );
-
         return statDtList;
     }
 }

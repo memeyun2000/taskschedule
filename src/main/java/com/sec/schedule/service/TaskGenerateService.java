@@ -104,9 +104,11 @@ public class TaskGenerateService {
      * 逻辑： 把taskinfo 拷贝一份副本到 taskfact
      */
     private void generateTask(String statDt) {
-
+        
         //生成任务 生成当天已未生成的任务，已生成的任务就不生成了
-        List<TaskInfo> taskInfoList = taskInfoDao.findOutGenerateTask(statDt);
+        //只生成日期对应粒度的任务
+        List<String> granularityList = checkStatDtGranularity(statDt);
+        List<TaskInfo> taskInfoList = taskInfoDao.findOutGenerateTask(statDt,granularityList);
         List<TaskFact> taskFactList = new ArrayList<TaskFact>();
         Date statDateTime = DateUtils.StringToDateTime(statDt);
 
@@ -143,5 +145,32 @@ public class TaskGenerateService {
         taskGenerateLog.setUpdateTime(new Date());
         taskGenerateLogDao.save(taskGenerateLog);
         System.out.println("任务日期："+ statDt +",已生成");
+    }
+
+    /**
+     *  检查数据日期是什么粒度的 生成任务需要满足粒度要求
+     */
+    private List<String> checkStatDtGranularity(String statDt) {
+        Date _statDate = DateUtils.stringToDateShort(statDt);
+        Date monthEnd = DateUtils.getMonthEnd(_statDate);
+        Date seasonEnd = DateUtils.getSeasonEnd(_statDate);
+        Date halfYearEnd = DateUtils.getHalfYearEnd(_statDate);
+        Date yearEnd = DateUtils.getYearEnd(_statDate);
+        List<String> granularityList = new ArrayList<String>();
+        if(_statDate == monthEnd) {
+            granularityList.add("M");
+        }
+        if(_statDate == seasonEnd) {
+            granularityList.add("S");
+        }
+        if(_statDate == halfYearEnd) {
+            granularityList.add("HY");
+        }
+        if(_statDate == yearEnd) {
+            granularityList.add("Y");
+        }
+        granularityList.add("D");
+
+        return granularityList;
     }
 }

@@ -14,7 +14,7 @@ public interface TaskInfoDao extends JpaRepository<TaskInfo,String>{
     // List<TaskInfo> findAll();
     TaskInfo findByTaskId(String taskId);
 
-    @Query("select t from task_info t where t.taskId not in (select t2.id.taskId from task_fact t2 where t2.id.statDt = ?1)")
-    List<TaskInfo> findOutGenerateTask(String statDt);
+    @Query("select t from task_info t where t.taskId not in (select t2.id.taskId from task_fact t2 where t2.id.statDt = ?1) and granularity in (?2)")
+    List<TaskInfo> findOutGenerateTask(String statDt,List<String> granularityList);
 
 }

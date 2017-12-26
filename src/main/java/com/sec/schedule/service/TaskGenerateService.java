@@ -110,7 +110,7 @@ public class TaskGenerateService {
         List<String> granularityList = checkStatDtGranularity(statDt);
         List<TaskInfo> taskInfoList = taskInfoDao.findOutGenerateTask(statDt,granularityList);
         List<TaskFact> taskFactList = new ArrayList<TaskFact>();
-        Date statDateTime = DateUtils.StringToDateTime(statDt);
+        Date statDateTime = DateUtils.stringToDateShort(statDt);
 
         for (TaskInfo taskInfo : taskInfoList) {
             String taskId = taskInfo.getTaskId();

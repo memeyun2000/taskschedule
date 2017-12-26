@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-// @SpringBootTest
+@SpringBootTest
 public class TaskExecuteServiceTest {
 
     //-- test 1 --//
-    // @Autowired
+    @Autowired
     private TaskExecuteService taskExecuteService;
 
-    // @Test
+    @Test
     public void test1(){
         List<TaskFact> list = new ArrayList<TaskFact>();
         TaskFact taskFact = new TaskFact();

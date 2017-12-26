@@ -98,9 +98,11 @@ public class TaskExecuteService{
                     .filter(dependTask -> {
                         CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
                         taskFactId.setStatDt(statDt);
-                        taskFactId.setTaskId(dependTask.getId().getTaskId());
+                        taskFactId.setTaskId(dependTask.getId().getDependTaskId());
+                        System.out.println(statDt + "--------"+dependTask.getId().getTaskId()+"--------" + dependTaskFactMap.getOrDefault(taskFactId, "4"));
                         return !dependTaskFactMap.getOrDefault(taskFactId, "4").equals("4");
                     }).count();
+                System.out.println("-------------------------" + dependTaskStatus2count);
                 if (dependTaskStatus2count > 0) {
                     return false ;
                 }
@@ -143,27 +145,29 @@ public class TaskExecuteService{
                 return tmp;
             })
             .distinct()
-            .map(task -> {
+            .flatMap(task -> {
                 String statDt = task.get(0);
+                String _statDt = statDt;
                 String granularity = task.get(1);
+                List<String> list = new ArrayList<String>();
                 if(granularity.equalsIgnoreCase("D")) {
-                    statDt = DateUtils.dateStrAddDate(statDt, "d", 1);
+                    _statDt = DateUtils.dateStrAddDate(statDt, "d", -1);
                 } else if(granularity.equalsIgnoreCase("M")) {
-                    statDt = DateUtils.dateStrAddDate(statDt, "m", 1);
+                    _statDt = DateUtils.dateStrAddDate(statDt, "m", -1);
                 } else if(granularity.equalsIgnoreCase("S")) {
-                    statDt = DateUtils.dateStrAddDate(statDt, "m", 3);
+                    _statDt = DateUtils.dateStrAddDate(statDt, "m", -3);
                 } else if(granularity.equalsIgnoreCase("HY")) {
-                    statDt = DateUtils.dateStrAddDate(statDt, "m", 6);
+                    _statDt = DateUtils.dateStrAddDate(statDt, "m", -6);
                 } else if(granularity.equalsIgnoreCase("Y")) {
-                    statDt = DateUtils.dateStrAddDate(statDt, "y", 1);
-                } else {
-                    statDt = "";
+                    _statDt = DateUtils.dateStrAddDate(statDt, "y", -1);
                 }
-                return statDt;
+                list.add(statDt);
+                list.add(_statDt);
+                return list.stream();
             })
             .distinct()
             .collect(Collectors.toList());
-            
+        
         return statDtList;
     }
 }

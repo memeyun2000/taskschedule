@@ -2,6 +2,7 @@ package com.sec.schedule;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -14,7 +15,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ImportResource(locations = { "classpath:applicationcontext-task.xml" })
 @EnableScheduling
 public class App{
+    public static ConfigurableApplicationContext ctx;
+
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        ctx = SpringApplication.run(App.class, args);
     }
 }

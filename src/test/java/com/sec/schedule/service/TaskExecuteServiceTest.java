@@ -71,9 +71,9 @@ public class TaskExecuteServiceTest {
 
 
     //--    test 2     --//
-    // @Autowired
+    @Autowired
     TaskFactDao taskFactDao;
-    // @Test
+    @Test
     public void test2(){
         List<String> tmpDtList = new ArrayList<String>();
         tmpDtList.add("2017-01-01");

@@ -6,9 +6,25 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class CompositeIdTaskDepend implements Serializable{
+    private static final long serialVersionUID = 29302894312L;
+
     private String taskId;
     private String dependTaskId;
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CompositeIdTaskDepend 
+                    && taskId.equals(((CompositeIdTaskDepend)obj).taskId)
+                    && dependTaskId.equals(((CompositeIdTaskDepend)obj).dependTaskId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 17 * 31 + taskId.hashCode();
+        result = 17 * 31^2 + dependTaskId.hashCode();
+        return result;
+    }
     //-- getter and setter --//
     /**
      * @return the dependTaskId

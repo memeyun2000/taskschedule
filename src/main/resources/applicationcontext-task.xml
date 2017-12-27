@@ -21,8 +21,8 @@
         <property name="queueCapacity" value="25" />
     </bean>
 
-    <bean id="taskExecutorExample" class="com.sec.schedule.cron.JobExecutorImpl">
+    <!-- <bean id="taskExecutorExample" class="com.sec.schedule.cron.JobExecutorImpl">
         <constructor-arg ref="taskExecutor" />
-    </bean>
+    </bean> -->
 
 </beans>

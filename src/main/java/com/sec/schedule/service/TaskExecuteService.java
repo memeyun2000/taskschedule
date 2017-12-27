@@ -40,12 +40,13 @@ public class TaskExecuteService{
             int taskQueueSize = taskQueue.size();
             System.out.println("计算队列水位线：" + taskQueue.size());
             for (int i = 0; i < taskQueueSize; i++) {
-                jobExecutor.executeTask(taskQueue.poll());
+                TaskFact taskFact = taskQueue.poll();
+                System.out.println("---- task:" + taskFact.getId().getTaskId() + ",statDt:" + taskFact.getId().getStatDt());
+                jobExecutor.executeTask(taskFact);
             }
         } else {
-            //TODO：查找需要计算的任务
             calculateReadyTask(taskQueue);
-            System.out.println("找到需要计算的任务");
+            System.out.println("查找计算的任务");
         }
     }
 
@@ -99,10 +100,8 @@ public class TaskExecuteService{
                         CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
                         taskFactId.setStatDt(statDt);
                         taskFactId.setTaskId(dependTask.getId().getDependTaskId());
-                        System.out.println(statDt + "--------"+dependTask.getId().getTaskId()+"--------" + dependTaskFactMap.getOrDefault(taskFactId, "4"));
                         return !dependTaskFactMap.getOrDefault(taskFactId, "4").equals("4");
                     }).count();
-                System.out.println("-------------------------" + dependTaskStatus2count);
                 if (dependTaskStatus2count > 0) {
                     return false ;
                 }

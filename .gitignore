@@ -10,3 +10,5 @@ target
 # derby
 derby.log
 
+# logger
+app.log

@@ -43,7 +43,7 @@ public class JobExecutorImpl {
             taskFact.setStatus(TaskStatus.RUNNING);
             taskFactDao.save(taskFact);
 
-            //TODO:任务执行的逻辑未实现
+            //任务执行
             String result = task.executeTask(taskFact);
 
             //任务执行完成 根据任务执行的状态 保存执行结果

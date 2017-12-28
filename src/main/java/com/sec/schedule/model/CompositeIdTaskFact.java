@@ -35,6 +35,10 @@ public class CompositeIdTaskFact implements Serializable{
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "{statDt:" + statDt + ",taskId:"+ taskId +"}";
+    }
 
     //-- getter and setter --//
     /**

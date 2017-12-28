@@ -12,10 +12,16 @@ import java.util.List;
  */
 public interface TaskFactDao extends JpaRepository<TaskFact,CompositeIdTaskFact>{
     
+    
+    List<TaskFact> findByStatus(String status);
+
+    
+
     @Query("select count(1) from task_fact where stat_dt = ?1")
     Long findCountByStatDt(String statDt);
 
-    List<TaskFact> findByStatus(String status);
+    @Query("select t from task_fact t where t.id.statDt = ?1  order by t.id.statDt desc")
+    List<TaskFact> findTaskFactListByStatDt(String statDt);
 
     @Query("select t from task_fact t where t.id.statDt in (?1)")
     List<TaskFact> findTaskFactListByStatDts(List<String> statDtList);

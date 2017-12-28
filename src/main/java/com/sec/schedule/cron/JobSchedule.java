@@ -32,7 +32,7 @@ public class JobSchedule {
      * 消费者
      * 寻找需要执行的任务 并把需要执行的任务放入任务执行器中执行
      */
-    @Scheduled(fixedRate=10000)
+    // @Scheduled(fixedRate=10000)
     public void jobQueueGenerateAndExecute() throws Exception {
         taskExecuteService.execute(taskQueue);
     }
@@ -41,7 +41,7 @@ public class JobSchedule {
      * 生产者
      * 生成每日的任务列表到taskfact表
      */
-    @Scheduled(fixedRate = 10000)
+    // @Scheduled(fixedRate = 10000)
     public void jobScheduleGenerate() throws Exception {
         taskGenerateService.execute();
     }

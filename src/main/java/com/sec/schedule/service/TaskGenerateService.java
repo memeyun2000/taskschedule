@@ -150,23 +150,23 @@ public class TaskGenerateService {
     /**
      *  检查数据日期是什么粒度的 生成任务需要满足粒度要求
      */
-    private List<String> checkStatDtGranularity(String statDt) {
+    public List<String> checkStatDtGranularity(String statDt) {
         Date _statDate = DateUtils.stringToDateShort(statDt);
-        Date monthEnd = DateUtils.getMonthEnd(_statDate);
-        Date seasonEnd = DateUtils.getSeasonEnd(_statDate);
-        Date halfYearEnd = DateUtils.getHalfYearEnd(_statDate);
-        Date yearEnd = DateUtils.getYearEnd(_statDate);
+        String monthEnd = DateUtils.formatDate(DateUtils.getMonthEnd(_statDate),"yyyy-MM-dd");
+        String seasonEnd = DateUtils.formatDate(DateUtils.getSeasonEnd(_statDate),"yyyy-MM-dd");
+        String halfYearEnd = DateUtils.formatDate(DateUtils.getHalfYearEnd(_statDate),"yyyy-MM-dd");
+        String yearEnd = DateUtils.formatDate(DateUtils.getYearEnd(_statDate),"yyyy-MM-dd");
         List<String> granularityList = new ArrayList<String>();
-        if(_statDate == monthEnd) {
+        if(statDt.equals(monthEnd)) {
             granularityList.add("M");
         }
-        if(_statDate == seasonEnd) {
+        if(statDt.equals(seasonEnd)) {
             granularityList.add("S");
         }
-        if(_statDate == halfYearEnd) {
+        if(statDt.equals(halfYearEnd)) {
             granularityList.add("HY");
         }
-        if(_statDate == yearEnd) {
+        if(statDt.equals(yearEnd)) {
             granularityList.add("Y");
         }
         granularityList.add("D");

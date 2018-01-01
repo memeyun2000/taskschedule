@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,6 +36,14 @@ public class TaskExecuteService{
     private TaskInfoDao taskInfoDao;
     
     public void execute(BlockingQueue<TaskFact> taskQueue) throws Exception{
+        System.out.println("core pool seize ----------------:" + jobExecutor.getCorePoolSize());
+        System.out.println("active size ----------------:" + jobExecutor.getActiveCount());
+        System.out.println("getThreadPriority size ----------------:" + jobExecutor.getThreadPriority());
+        
+        if(jobExecutor.getActiveCount() > 0) {
+            System.out.println("任务正在计算，不向队列传输任务，休息！！该干嘛干嘛");
+            return;
+        }
         //计算队列不为空，放入计算任务
         if (taskQueue.size() > 0) {
             int taskQueueSize = taskQueue.size();
@@ -43,6 +52,7 @@ public class TaskExecuteService{
                 TaskFact taskFact = taskQueue.poll();
                 System.out.println("---- task:" + taskFact.getId().getTaskId() + ",statDt:" + taskFact.getId().getStatDt());
                 jobExecutor.executeTask(taskFact);
+
             }
         } else {
             calculateReadyTask(taskQueue);
@@ -125,9 +135,15 @@ public class TaskExecuteService{
                     return false;
                 }
                 return true;
-            }).sorted((task1,task2) -> new Long(DateUtils.diffTowDate(task1.getAllowCalTime(), task2.getAllowCalTime())).intValue() )
+            }).sorted((task1,task2) -> {
+                // int sortNum = new Long(DateUtils.diffTowDate(task1.getAllowCalTime(), task2.getAllowCalTime())).intValue();
+                // sortNum = sortNum == 0 ? 1 :sortNum;
+                return task1.getAllowCalTime().getTime() > task2.getAllowCalTime().getTime() ? 1 : -1;
+                // return sortNum;
+            })
             .collect(Collectors.toList());
 
+        System.out.println("放入计算任务: " + taskfactReadyCalList.size());
         //放入任务执行队列中
         for (TaskFact taskFact : taskfactReadyCalList) {
             taskQueue.put(taskFact);

@@ -20,8 +20,6 @@ public class TaskImplSparkJob {
 
     private String exectorCores;
 
-    private String cores;
-
     private String queue;
 
     private String classname;
@@ -100,12 +98,6 @@ public class TaskImplSparkJob {
         return classname;
     }
     /**
-     * @return the cores
-     */
-    public String getCores() {
-        return cores;
-    }
-    /**
      * @return the deployMode
      */
     public String getDeployMode() {
@@ -182,12 +174,6 @@ public class TaskImplSparkJob {
      */
     public void setClassname(String classname) {
         this.classname = classname;
-    }
-    /**
-     * @param cores the cores to set
-     */
-    public void setCores(String cores) {
-        this.cores = cores;
     }
     /**
      * @param deployMode the deployMode to set

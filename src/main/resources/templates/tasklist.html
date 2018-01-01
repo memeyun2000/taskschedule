@@ -8,11 +8,42 @@
 
 <body>
     <h1>任务监控</h1>
+    <form action="#" id="searchForm" th:action="@{/searchTasklist}" method="post">
+        <input type="submit" value="查询" />
+        <table>
+            <tr>
+                <td>
+                    任务日期：<input type="text" name="statDtBegin" th:value="${statDtBegin}"/> 至<input type="text" name="statDtEnd" th:value="${statDtEnd}"/>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    任务id：<input type="text" name="taskId" th:value="${taskId}"/>
+                </td>
+                <td>
+                    任务状态：<input type="text" name="status" th:value="${status}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    任务类型：<input type="text" name="taskType" th:value="${taskType}"/>
+                </td>
+                <td>
+                    任务粒度：<input type="text" name="granularity" th:value="${granularity}"/>
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
     <form action="#" th:action="@{/updateTaskStatus}" method="post">
         <input type="submit" value="重新计算" />
         <table border="1">
             <thead>
-                <th>全选</th>
+                <th><span><a href="#" onclick="selectAll()">全选</a> &nbsp;<a href="#" onclick="unselectAll()">取消</a></span></th>
                 <th>数据日期</th>
                 <th>任务id</th>
                 <th>任务类型</th>
@@ -25,7 +56,7 @@
             <tbody th:each="task,taskstat:${tasklist}">
                 <tr>
                     <td>
-                        <input type="checkbox" name="id" th:value="${task.id}" />
+                        <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id}" />
                         <!-- <input type="hidden" name="id" th:value="${task.id}" /> -->
                     </td>
                     <td>
@@ -57,6 +88,31 @@
         </table>
         
     </form>
+    <script th:inline="javascript" type="text/javascript">
+        document.onkeydown = function (e) {
+            if(!e) {
+                e = windows.event;
+            }
+            if(( e.keyCode || e.which ) == 13) {
+                search();
+            }
+        }
+        function search() {
+            document.getElementById("searchForm").submit();
+        }
+        function selectAll() {
+            var checkboxObjs = document.getElementsByName("checkboxid");
+            /*<![CDATA[*/for(var i=0 ; i < checkboxObjs.length ; i++) {/*]]>*/
+                checkboxObjs[i].checked = true;
+            }
+        }
+        function unselectAll() {
+            var checkboxObjs = document.getElementsByName("checkboxid");
+            /*<![CDATA[*/for(var i=0 ; i < checkboxObjs.length ; i++) {/*]]>*/
+                checkboxObjs[i].checked = false;
+            }
+        }
+    </script>
 </body>
 
 </html>

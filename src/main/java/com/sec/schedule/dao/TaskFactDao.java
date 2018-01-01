@@ -1,6 +1,7 @@
 package com.sec.schedule.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import com.sec.schedule.entity.TaskFact;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * TaskFactDao
  */
-public interface TaskFactDao extends JpaRepository<TaskFact,CompositeIdTaskFact>{
+public interface TaskFactDao extends JpaRepository<TaskFact,CompositeIdTaskFact>,JpaSpecificationExecutor<TaskFact>{
     
     
     List<TaskFact> findByStatus(String status);

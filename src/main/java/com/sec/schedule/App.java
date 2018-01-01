@@ -21,7 +21,7 @@ import com.sec.schedule.entity.TaskConfig;
 @SpringBootApplication
 @ImportResource(locations = { "classpath:applicationcontext-task.xml" })
 @EnableScheduling
-public class App implements CommandLineRunner{
+public class App {
     public static ConfigurableApplicationContext ctx;
 
     public static void main(String[] args) {
@@ -32,17 +32,17 @@ public class App implements CommandLineRunner{
 
 
 
-    //-- 缓存的配置信息 --//
-    public static Map<String,String> dict ;
-    @Autowired
-    private TaskConfigDao taskConfigDao;
-    /**
-     * 初始化  缓存一些 配置信息
-     */
-	@Override
-	public void run(String... args) throws Exception {
-        dict = taskConfigDao.findAll()
-                   .stream()
-                   .collect(Collectors.toMap(TaskConfig::getDictKey, TaskConfig::getDictValue));
-	}
+    // //-- 缓存的配置信息 --//
+    // public static Map<String,String> dict ;
+    // @Autowired
+    // private TaskConfigDao taskConfigDao;
+    // /**
+    //  * 初始化  缓存一些 配置信息
+    //  */
+	// @Override
+	// public void run(String... args) throws Exception {
+    //     dict = taskConfigDao.findAll()
+    //                .stream()
+    //                .collect(Collectors.toMap(TaskConfig::getDictKey, TaskConfig::getDictValue));
+	// }
 }

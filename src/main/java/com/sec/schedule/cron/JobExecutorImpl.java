@@ -44,7 +44,7 @@ public class JobExecutorImpl {
             task = (TaskService)App.ctx.getBean(taskFact.getTaskType());
 
             try{
-                Thread.sleep(1);
+                Thread.sleep(4000);
             } catch (Exception e) {
                 e.printStackTrace();
             }

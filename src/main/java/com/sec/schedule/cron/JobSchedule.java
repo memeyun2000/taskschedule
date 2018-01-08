@@ -25,14 +25,14 @@ public class JobSchedule {
     private TaskExecuteService taskExecuteService;
 
     public JobSchedule() {
-        this.taskQueue = new ArrayBlockingQueue<TaskFact>(1000);
+        this.taskQueue = new ArrayBlockingQueue<TaskFact>(101);
     }
 
     /**
      * 消费者
      * 寻找需要执行的任务 并把需要执行的任务放入任务执行器中执行
      */
-     @Scheduled(fixedRate=20000)
+     @Scheduled(fixedRate=60000)
     public void jobQueueGenerateAndExecute() throws Exception {
         taskExecuteService.execute(taskQueue);
     }

@@ -3,6 +3,8 @@ package com.sec.schedule.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sec.schedule.dao.TaskImplSparkJobDao;
+import com.sec.schedule.entity.TaskImplSparkJob;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,6 +32,9 @@ public class TaskController {
     @Autowired
     TaskFactDao taskFactDao;
 
+    @Autowired
+    TaskImplSparkJobDao taskImplSparkJobDao;
+
     @RequestMapping("/tasklist")
     public String tasklist(@RequestParam(required=false) String statDt , Model model) {
         if(statDt == null) {
@@ -38,7 +43,17 @@ public class TaskController {
 
         List<TaskFact> taskFactList = taskFactDao.findTaskFactListByStatDt(statDt);
         model.addAttribute("tasklist", taskFactList);
+        model.addAttribute("statDtBegin", statDt);
+        model.addAttribute("statDtEnd", statDt);
         return "tasklist";
+    }
+
+
+    @RequestMapping("/taskSparkJobInfo")
+    public String taskSparkJobList(Model model) {
+        List<TaskImplSparkJob> taskFactList = taskImplSparkJobDao.findAll();
+        model.addAttribute("tasklist", taskFactList);
+        return "taskSparkJobInfo";
     }
 
 
@@ -50,6 +65,7 @@ public class TaskController {
                                  @RequestParam(required = false) String granularity ,
                                  @RequestParam(required = false) String status ,
                                   Model model) {
+
         List<TaskFact> taskFactList = taskFactDao.findAll(new Specification<TaskFact>() {
             @Override
             public Predicate toPredicate(Root<TaskFact> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
@@ -90,16 +106,37 @@ public class TaskController {
 
 
     @RequestMapping(value="/updateTaskStatus",method=RequestMethod.POST)
-    public String updateTaskStatus(@RequestParam String[] checkboxid) {
-        Gson gson = new Gson();
+    public String updateTaskStatus(@RequestParam(required = false) String[] checkboxid,
+                                    @RequestParam(required = false) String[] checkboxstatdt,
+                                   @RequestParam(required = false) String submitStatus,
+                                   @RequestParam(required = false) String statDtBegin ,
+                                   @RequestParam(required = false) String statDtEnd ,
+                                   @RequestParam(required = false) String taskId ,
+                                   @RequestParam(required = false) String taskType ,
+                                   @RequestParam(required = false) String granularity ,
+                                   @RequestParam(required = false) String status,
+                                     Model model) {
+        List<TaskFact> list = new ArrayList<>();
 
         
         for(int i=0 ; i< checkboxid.length ; i++) {
-            CompositeIdTaskFact taskFactId = gson.fromJson(checkboxid[i], CompositeIdTaskFact.class);
+            CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
+            taskFactId.setTaskId(checkboxid[i]);
+            taskFactId.setStatDt(checkboxstatdt[i]);
             TaskFact taskFact = taskFactDao.findOne(taskFactId);
-            taskFact.setStatus(TaskStatus.PENDING);
-            taskFactDao.save(taskFact);
+            taskFact.setStatus(submitStatus);
+            list.add(taskFact);
         }
-        return "forward:/tasklist";
+        if(list.size() >0 ) {
+            taskFactDao.save(list);
+        }
+
+        model.addAttribute("statDtBegin", statDtBegin);
+        model.addAttribute("statDtEnd", statDtEnd);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("taskType", taskType);
+        model.addAttribute("granularity", granularity);
+        model.addAttribute("status", status);
+        return "forward:/searchTasklist";
     }
 }

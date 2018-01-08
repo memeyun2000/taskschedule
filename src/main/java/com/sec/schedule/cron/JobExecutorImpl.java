@@ -1,5 +1,7 @@
 package com.sec.schedule.cron;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
@@ -16,6 +18,8 @@ import java.util.Date;
 
 @Component
 public class JobExecutorImpl { 
+    private static Logger logger = LoggerFactory.getLogger(JobExecutorImpl.class);
+
     @Autowired
     @Qualifier("taskExecutor") 
     public ThreadPoolTaskExecutor taskExecutor;
@@ -24,6 +28,7 @@ public class JobExecutorImpl {
 
     public JobExecutorImpl(ThreadPoolTaskExecutor taskExecutor){
         this.taskExecutor = taskExecutor;
+        this.taskExecutor.setKeepAliveSeconds(Integer.MAX_VALUE);
     }
 
     //任务执行线程
@@ -40,14 +45,8 @@ public class JobExecutorImpl {
 		public void run() {
             
             //TODO:如果需要任务强制停止 在这里写逻辑 让后面的任务不要跑批了
-            System.out.println("开始任务：statdt:" + taskFact.getId().getStatDt() +",taskid:" + taskFact.getId().getTaskId());
+            logger.info("开始任务,statdt:{},,taskid:", taskFact.getId().getStatDt(),taskFact.getId().getTaskId());
             task = (TaskService)App.ctx.getBean(taskFact.getTaskType());
-
-            try{
-                Thread.sleep(4000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             
             //设置任务正在计算
             taskFact.setStatus(TaskStatus.RUNNING);
@@ -64,8 +63,7 @@ public class JobExecutorImpl {
             taskFact.setCalEndTime(new Date());
             taskFactDao.save(taskFact);
 
-            System.out.println("status:" + result);
-			System.out.println("执行任务结束:DATE[" + taskFact.getId().getStatDt() + "],TASKID[" + taskFact.getId().getTaskId() + "]");
+			logger.info("执行任务结束:DATE:[{}],TASKID:[{}],STATUS:[{}]",taskFact.getId().getStatDt(),taskFact.getId().getTaskId(),result);
 		}
     }
 
@@ -79,6 +77,9 @@ public class JobExecutorImpl {
     public int getActiveCount() {
         
         return taskExecutor.getActiveCount();
+    }
+    public int getKeepAliveSeconds() {
+        return taskExecutor.getKeepAliveSeconds();
     }
     public void executeTask(TaskFact taskFact){
         taskExecutor.execute(new JobExecuteTask(taskFact));

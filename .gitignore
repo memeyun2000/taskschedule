@@ -11,4 +11,4 @@ target
 derby.log
 
 # logger
-app.log
+*.log

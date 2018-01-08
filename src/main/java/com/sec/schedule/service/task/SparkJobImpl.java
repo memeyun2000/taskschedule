@@ -1,19 +1,19 @@
 package com.sec.schedule.service.task;
 
-import com.sec.schedule.utils.DateUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.sec.schedule.dao.TaskImplSparkJobDao;
 import com.sec.schedule.dict.TaskStatus;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.entity.TaskImplSparkJob;
+import com.sec.schedule.utils.DateUtils;
 import com.sec.schedule.utils.ExecUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("sparkJob")
 public class SparkJobImpl implements TaskService {
-    public static Logger logger = Logger.getLogger(SparkJobImpl.class);
+    public static Logger logger = LoggerFactory.getLogger(SparkJobImpl.class);
     @Autowired
     TaskImplSparkJobDao sparkDao;
 
@@ -29,7 +29,7 @@ public class SparkJobImpl implements TaskService {
 
             logger.debug(cmd);
             //TODO:
-            // ExecUtils.exec(getCmd(sparkJob));
+            // ExecUtils.execSpakJob(cmd);
         } catch (Exception e) {
             e.printStackTrace();
             retVal = TaskStatus.FAILED;
@@ -54,10 +54,11 @@ public class SparkJobImpl implements TaskService {
                 sparkJob.getTaskId() == null ? "" : sparkJob.getTaskId() + "-" + dateStrMonBegin,
                 sparkJob.getJarName() == null ? "" : sparkJob.getJarName(),
                 dateStrMonBegin,
-                sparkJob.getArgs2() == null ? "" : sparkJob.getArgs1(),
-                sparkJob.getArgs3() == null ? "" : sparkJob.getArgs2(),
-                sparkJob.getArgs4() == null ? "" : sparkJob.getArgs3(),
-                sparkJob.getArgs5() == null ? "" : sparkJob.getArgs4()
+                sparkJob.getArgs1() == null ? "" : sparkJob.getArgs1(),
+                sparkJob.getArgs2() == null ? "" : sparkJob.getArgs2(),
+                sparkJob.getArgs3() == null ? "" : sparkJob.getArgs3(),
+                sparkJob.getArgs4() == null ? "" : sparkJob.getArgs4(),
+                sparkJob.getArgs5() == null ? "" : sparkJob.getArgs5()
         );
 
     }

@@ -1,5 +1,7 @@
 package com.sec.schedule.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.sec.schedule.cron.JobExecutorImpl;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class TaskExecuteService{
+    private static Logger logger = LoggerFactory.getLogger(TaskExecuteService.class);
 
     @Autowired
     private JobExecutorImpl jobExecutor;
@@ -36,27 +39,27 @@ public class TaskExecuteService{
     private TaskInfoDao taskInfoDao;
     
     public void execute(BlockingQueue<TaskFact> taskQueue) throws Exception{
-        System.out.println("core pool seize ----------------:" + jobExecutor.getCorePoolSize());
-        System.out.println("active size ----------------:" + jobExecutor.getActiveCount());
-        System.out.println("getThreadPriority size ----------------:" + jobExecutor.getThreadPriority());
+        logger.debug("core pool size:{}", jobExecutor.getCorePoolSize());
+        logger.debug("active size,{}", jobExecutor.getActiveCount());
+        logger.debug("getThreadPriority size,{}", jobExecutor.getThreadPriority());
+        logger.debug("keepAliveSecond size,{}", jobExecutor.getKeepAliveSeconds());
         
         if(jobExecutor.getActiveCount() > 0) {
-            System.out.println("任务正在计算，不向队列传输任务，休息！！该干嘛干嘛");
+            logger.info("任务正在计算，不向队列传输任务，休息！！该干嘛干嘛");
             return;
         }
         //计算队列不为空，放入计算任务
         if (taskQueue.size() > 0) {
             int taskQueueSize = taskQueue.size();
-            System.out.println("计算队列水位线：" + taskQueue.size());
             for (int i = 0; i < taskQueueSize; i++) {
                 TaskFact taskFact = taskQueue.poll();
-                System.out.println("---- task:" + taskFact.getId().getTaskId() + ",statDt:" + taskFact.getId().getStatDt());
+                logger.debug("放入计算任务，task:{},statDt:{}" ,taskFact.getId().getTaskId(), taskFact.getId().getStatDt());
                 jobExecutor.executeTask(taskFact);
 
             }
         } else {
             calculateReadyTask(taskQueue);
-            System.out.println("查找计算的任务");
+            logger.info("查找计算的任务");
         }
     }
 
@@ -143,9 +146,14 @@ public class TaskExecuteService{
             })
             .collect(Collectors.toList());
 
-        System.out.println("放入计算任务: " + taskfactReadyCalList.size());
+        logger.info("放入100个计算任务,水位线：{}",taskfactReadyCalList.size());
+        int maxLen = 100;
+        if(taskfactReadyCalList.size() < 100 ) {
+            maxLen = taskfactReadyCalList.size();
+        }
         //放入任务执行队列中
-        for (TaskFact taskFact : taskfactReadyCalList) {
+        for (int i=0 ;i < maxLen ; i++) {
+            TaskFact taskFact = taskfactReadyCalList.get(i);
             taskQueue.put(taskFact);
         }
     }

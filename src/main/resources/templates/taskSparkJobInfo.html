@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+    <h1>spark job info</h1>
+        <table border="1">
+            <thead>
+                <th>任务id</th>
+                <th>jar包</th>
+                <th>运行方式</th>
+                <th>部署类型</th>
+                <th>驱动内存</th>
+                <th>执行内存</th>
+                <th>执行cpu</th>
+                <th>队列</th>
+                <th>类名</th>
+                <th>任务名称</th>
+                <th>参数1</th>
+                <th>参数2</th>
+                <th>参数3</th>
+                <th>参数4</th>
+                <th>参数5</th>
+            </thead>
+            <tbody th:each="task,taskstat:${tasklist}">
+                <tr>
+                    <td>
+                        <span th:text="${task.taskId}" ></span>
+                        <!-- <input type="hidden" name="id" th:value="${task.id}" /> -->
+                    </td>
+                    <td>
+                        <span th:text="${task.jarName}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.master}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.deployMode}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.driverMemory}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.exectorMemory}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.exectorCores}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.queue}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.classname}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.taskname}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.args1}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.args2}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.args3}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.args4}" ></span>
+                    </td>
+                    <td>
+                        <span th:text="${task.args5}" ></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+
+</body>
+
+</html>

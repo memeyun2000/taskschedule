@@ -10,14 +10,14 @@ import com.sec.schedule.entity.TaskImplJdbcSql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("jdbcSql")
 public class JdbcSqlImpl implements TaskService{
-    public static Logger logger = Logger.getLogger(JdbcSqlImpl.class);
+    public static Logger logger = LoggerFactory.getLogger(JdbcSqlImpl.class);
 
     @Autowired
     private TaskImplJdbcSqlDao jdbcSqlDao;

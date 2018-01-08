@@ -7,9 +7,8 @@
 </head>
 
 <body>
-    <h1>任务监控2333332323</h1>
-    <form action="#" id="searchForm" th:action="@{/searchTasklist}" method="post">
-        <input type="submit" value="查询" />
+    <h1>任务监控</h1>
+    <form action="#" id="form1" th:action="@{/updateTaskStatus}" method="post">
         <table>
             <tr>
                 <td>
@@ -35,13 +34,10 @@
                     任务粒度：<input type="text" name="granularity" th:value="${granularity}"/>
                 </td>
             </tr>
-
         </table>
-
-    </form>
-    <form action="#" th:action="@{/updateTaskStatus}" method="post">
-        <input type="submit" value="重新计算" />
-        <table border="1">
+        <input type="button" onclick="setstate()" value="重新计算" />
+        <input type="text" name="submitStatus" value="2"/>
+        <table border="1" style="border: 1px solid">
             <thead>
                 <th><span><a href="#" onclick="selectAll()">全选</a> &nbsp;<a href="#" onclick="unselectAll()">取消</a></span></th>
                 <th>数据日期</th>
@@ -56,7 +52,8 @@
             <tbody th:each="task,taskstat:${tasklist}">
                 <tr>
                     <td>
-                        <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id}" />
+                        <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id.taskId}" />
+                        <input type="hidden" name="checkboxstatdt" th:value="${task.id.statDt}"/>
                         <!-- <input type="hidden" name="id" th:value="${task.id}" /> -->
                     </td>
                     <td>
@@ -98,7 +95,12 @@
             }
         }
         function search() {
-            document.getElementById("searchForm").submit();
+            document.getElementById("form1").action = "/searchTasklist";
+            document.getElementById("form1").submit();
+        }
+        function setstate(){
+            document.getElementById("form1").action = "/updateTaskStatus";
+            document.getElementById("form1").submit();
         }
         function selectAll() {
             var checkboxObjs = document.getElementsByName("checkboxid");

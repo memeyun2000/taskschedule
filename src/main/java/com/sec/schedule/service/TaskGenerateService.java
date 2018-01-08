@@ -1,5 +1,7 @@
 package com.sec.schedule.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,7 @@ import java.util.List;
  */
 @Component
 public class TaskGenerateService {
-    
+    public static Logger logger = LoggerFactory.getLogger(TaskGenerateService.class);
     //任务生成记录表
     @Autowired
     TaskGenerateLogDao taskGenerateLogDao;
@@ -53,14 +55,14 @@ public class TaskGenerateService {
         // 如果没有生成日期，则说明系统是第一次跑批，自动创建一个当前日期
         if(statDt == null) {
             this.createGenerateDtStatusFalse(DateUtils.getCurrentDateStr());
-            System.out.println("初始化...任务队列第一次跑批，设置" + DateUtils.getCurrentDateStr() + "为首次数据日期。如需修改任务生成日期，请将：task_generate_log日期提前");
+            logger.debug("初始化...任务队列第一次跑批，设置{}为首次数据日期。如需修改任务生成日期，请将：task_generate_log日期提前" ,DateUtils.getCurrentDateStr());
             return false;
         }
         // 最小未生成任务日期 大于 t+3 则 不用生成任务
         // 超过三天 
         if(DateUtils.diffTowDate(DateUtils.stringToDateShort(statDt), 
                                  DateUtils.addDate(new Date(), "d", GENER_TASK_DATE_NUM - 1)) > 0) {
-            System.out.println("没有任务需要生成，休息");
+            logger.debug("没有任务需要生成，休息");
             return false;
         }
         createGenerateDtStatusFalse();
@@ -139,12 +141,11 @@ public class TaskGenerateService {
         taskFactDao.save(taskFactList);
 
         //更新生成状态
-        System.out.println("更新状态");
         TaskGenerateLog taskGenerateLog = taskGenerateLogDao.findOne(statDt);
         taskGenerateLog.setStatus(true);
         taskGenerateLog.setUpdateTime(new Date());
         taskGenerateLogDao.save(taskGenerateLog);
-        System.out.println("任务日期："+ statDt +",已生成");
+        logger.info("任务日期：{},已生成",statDt);
     }
 
     /**

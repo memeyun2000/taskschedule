@@ -20,7 +20,7 @@ import com.sec.schedule.entity.TaskConfig;
  */
 @SpringBootApplication
 @ImportResource(locations = { "classpath:applicationcontext-task.xml" })
-@EnableScheduling
+// @EnableScheduling
 public class App {
     public static ConfigurableApplicationContext ctx;
 

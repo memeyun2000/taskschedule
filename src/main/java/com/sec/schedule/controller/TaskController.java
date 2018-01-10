@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import com.sec.schedule.dao.TaskFactDao;
 import com.sec.schedule.dict.TaskStatus;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.model.CompositeIdTaskFact;
+import com.sec.schedule.model.Message;
 import com.sec.schedule.utils.DateUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -138,5 +140,28 @@ public class TaskController {
         model.addAttribute("granularity", granularity);
         model.addAttribute("status", status);
         return "forward:/searchTasklist";
+    }
+
+    @RequestMapping(value="/test",method=RequestMethod.GET)
+    public String test(@ModelAttribute(value="message")Message message) {
+        message.setInfo("hello world");
+        return "taskSparkJobInfo";
+    }
+
+
+    public static class Message{
+        private String info = "";
+        /**
+         * @return the info
+         */
+        public String getInfo() {
+            return info;
+        }
+        /**
+         * @param info the info to set
+         */
+        public void setInfo(String info) {
+            this.info = info;
+        }
     }
 }

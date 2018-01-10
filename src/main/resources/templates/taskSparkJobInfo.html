@@ -7,6 +7,10 @@
 </head>
 
 <body>
+    <form action="#" th:action="@{/tests}" th:object="${message}">
+        <input type="text" th:field="*{info}"/>
+        <input type="submit" />
+    </form>
     <h1>spark job info</h1>
         <table border="1">
             <thead>

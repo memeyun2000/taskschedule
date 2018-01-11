@@ -48,11 +48,11 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <!-- spring thymeleaf 热部署使用 -->
-        <!-- <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
-        </dependency> -->
+        </dependency>
 
         <!-- spring-test -->
         <dependency>
@@ -164,9 +164,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- <configuration>
+                <configuration>
                     <fork>true</fork>
-                </configuration> -->
+                </configuration>
             </plugin>
         </plugins>
     </build>

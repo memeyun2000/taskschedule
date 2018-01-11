@@ -1,13 +1,21 @@
 package com.sec.schedule.controller;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.sec.schedule.dao.TaskImplSparkJobDao;
 import com.sec.schedule.entity.TaskImplSparkJob;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +29,7 @@ import com.sec.schedule.dict.TaskStatus;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.model.CompositeIdTaskFact;
 import com.sec.schedule.model.Message;
+import com.sec.schedule.model.TaskFactModel;
 import com.sec.schedule.utils.DateUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -30,6 +39,7 @@ import javax.persistence.criteria.Root;
 
 @Controller
 public class TaskController {
+    public static Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     @Autowired
     TaskFactDao taskFactDao;
@@ -38,15 +48,95 @@ public class TaskController {
     TaskImplSparkJobDao taskImplSparkJobDao;
 
     @RequestMapping("/tasklist")
-    public String tasklist(@RequestParam(required=false) String statDt , Model model) {
-        if(statDt == null) {
-            statDt = DateUtils.getCurrentDateStr();
-        }
+    public String tasklist(@RequestParam(required=false,defaultValue="0") String newSearchFlag ,
+                           @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
+                           @ModelAttribute Pageable page,
+                           Model model) {
+        logger.debug("taskFactModel:{}" ,taskFactModel.getId().getStatDt());
+        List<TaskFact> taskFactList = null;
+        Page<TaskFact> taskFactpage = null;
 
-        List<TaskFact> taskFactList = taskFactDao.findTaskFactListByStatDt(statDt);
+        if(page == null) {
+            // page = new PageableDefault(){
+            
+            //     @Override
+            //     public Class<? extends Annotation> annotationType() {
+            //         return null;
+            //     }
+            
+            //     @Override
+            //     public int value() {
+            //         return 0;
+            //     }
+            
+            //     @Override
+            //     public String[] sort() {
+            //         String []s = {"id.statDt"};
+            //         return s;
+            //     }
+            
+            //     @Override
+            //     public int size() {
+            //         return 15;
+            //     }
+            
+            //     @Override
+            //     public int page() {
+            //         return 1;
+            //     }
+            
+            //     @Override
+            //     public Direction direction() {
+            //         return Sort.Direction.DESC;
+            //     }
+            // };
+        }
+        //默认搜索内容
+        if(newSearchFlag.equals("1")) {
+            String statDt = DateUtils.getCurrentDateStr();
+            //默认查询当天的任务
+            taskFactModel.setStatDtBegin(statDt);
+            taskFactModel.setStatDtEnd(statDt);
+        } else {
+
+        }
+        
+        
+        //点击查询时触发的逻辑
+        // taskFactDao.findAll(spec, pageable)
+        taskFactpage = taskFactDao.findAll(new Specification<TaskFact>() {
+            @Override
+            public Predicate toPredicate(Root<TaskFact> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+                List<Predicate> list = new ArrayList<Predicate>();
+                if(StringUtils.isNotBlank(taskFactModel.getStatDtBegin())) {
+                    list.add(cb.greaterThanOrEqualTo(root.get("id").get("statDt").as(String.class),taskFactModel.getStatDtBegin()));
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getStatDtEnd())) {
+                    list.add(cb.lessThanOrEqualTo(root.get("id").get("statDt").as(String.class),taskFactModel.getStatDtEnd()));
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getId().getTaskId())) {
+                    list.add(cb.like(root.get("id").get("taskId").as(String.class),"%" + taskFactModel.getId().getTaskId() + "%"));
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getTaskType())) {
+                    list.add(cb.like(root.get("taskType").as(String.class),"%" + taskFactModel.getTaskType() + "%"));
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getGranularity())) {
+                    list.add(cb.equal(root.get("granularity").as(String.class),taskFactModel.getGranularity() ));
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getStatus())) {
+                    list.add(cb.equal(root.get("status").as(String.class),taskFactModel.getStatus()));
+                }
+
+                Predicate [] p = new Predicate[list.size()];
+                return cb.and(list.toArray(p));
+
+            }
+        },page);
+        
+
         model.addAttribute("tasklist", taskFactList);
-        model.addAttribute("statDtBegin", statDt);
-        model.addAttribute("statDtEnd", statDt);
+        model.addAttribute("taskFactPage",taskFactpage);
+        model.addAttribute("page",page);
         return "tasklist";
     }
 
@@ -148,20 +238,4 @@ public class TaskController {
         return "taskSparkJobInfo";
     }
 
-
-    public static class Message{
-        private String info = "";
-        /**
-         * @return the info
-         */
-        public String getInfo() {
-            return info;
-        }
-        /**
-         * @param info the info to set
-         */
-        public void setInfo(String info) {
-            this.info = info;
-        }
-    }
 }

@@ -10,7 +10,7 @@ public class TaskConfigDB {
     private String driver;
     private String url;
     private String username;
-    private String passwd;
+    private String passwd; 
 
 
 

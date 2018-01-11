@@ -9,7 +9,7 @@ import com.sec.schedule.model.CompositeIdTaskFact;
 
 @Entity(name="task_fact")
 public class TaskFact{
-    private CompositeIdTaskFact id;  //计算日期
+    private CompositeIdTaskFact id = new CompositeIdTaskFact();  //计算日期
     private String taskType;//任务类型
     private String granularity;//粒度
 

@@ -9,7 +9,7 @@ public class TaskImplJdbcSql {
     private String taskId;
     private String databaseId;
     private String sqlStr;
-
+  
     /**
      * @return the databaseId
      */

@@ -140,9 +140,12 @@
                 </tr>
             </tbody>
         </table>
-        第<input type="text" name="page.offset" th:value="${page.offset}"/>页
-        <input type="text" th:value="${page.pageNumber}"/>
-        总页数：<input type="text" th:value="${page.pageSize}"/>
+        <div th:object="${pageInfo}">
+            第<input type="text"/>页
+            <input type="text"  th:value="*{pageNum}"/>
+            总页数：<input type="text" th:value="*{pageSize}"/>
+        </div>
+        
     </form>
     <script th:inline="javascript" type="text/javascript">
         document.onkeydown = function (e) {

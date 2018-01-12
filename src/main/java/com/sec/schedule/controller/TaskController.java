@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -29,6 +30,7 @@ import com.sec.schedule.dict.TaskStatus;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.model.CompositeIdTaskFact;
 import com.sec.schedule.model.Message;
+import com.sec.schedule.model.PageInfo;
 import com.sec.schedule.model.TaskFactModel;
 import com.sec.schedule.utils.DateUtils;
 
@@ -38,7 +40,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Controller
-public class TaskController {
+public class TaskController extends BaseController{
     public static Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     @Autowired
@@ -50,47 +52,15 @@ public class TaskController {
     @RequestMapping("/tasklist")
     public String tasklist(@RequestParam(required=false,defaultValue="0") String newSearchFlag ,
                            @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
-                           @ModelAttribute Pageable page,
+                           @ModelAttribute(value="pageInfo") PageInfo pageInfo,
                            Model model) {
+        logger.debug("page:", pageInfo.getPageNum());
+        
+        Pageable page = getPageable(pageInfo);
         logger.debug("taskFactModel:{}" ,taskFactModel.getId().getStatDt());
         List<TaskFact> taskFactList = null;
         Page<TaskFact> taskFactpage = null;
-
-        if(page == null) {
-            // page = new PageableDefault(){
-            
-            //     @Override
-            //     public Class<? extends Annotation> annotationType() {
-            //         return null;
-            //     }
-            
-            //     @Override
-            //     public int value() {
-            //         return 0;
-            //     }
-            
-            //     @Override
-            //     public String[] sort() {
-            //         String []s = {"id.statDt"};
-            //         return s;
-            //     }
-            
-            //     @Override
-            //     public int size() {
-            //         return 15;
-            //     }
-            
-            //     @Override
-            //     public int page() {
-            //         return 1;
-            //     }
-            
-            //     @Override
-            //     public Direction direction() {
-            //         return Sort.Direction.DESC;
-            //     }
-            // };
-        }
+        
         //默认搜索内容
         if(newSearchFlag.equals("1")) {
             String statDt = DateUtils.getCurrentDateStr();

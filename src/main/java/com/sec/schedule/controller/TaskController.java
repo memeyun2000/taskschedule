@@ -54,11 +54,11 @@ public class TaskController extends BaseController{
                            @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
                            @ModelAttribute(value="pageInfo") PageInfo pageInfo,
                            Model model) {
-        logger.debug("page:", pageInfo.getPageNum());
+        logger.debug("page:{},pageSize:{}", pageInfo.getPageNum(),pageInfo.getPageSize());
         
         Pageable page = getPageable(pageInfo);
         logger.debug("taskFactModel:{}" ,taskFactModel.getId().getStatDt());
-        List<TaskFact> taskFactList = null;
+        // List<TaskFact> taskFactList = null;
         Page<TaskFact> taskFactpage = null;
         
         //默认搜索内容
@@ -71,9 +71,7 @@ public class TaskController extends BaseController{
 
         }
         
-        
         //点击查询时触发的逻辑
-        // taskFactDao.findAll(spec, pageable)
         taskFactpage = taskFactDao.findAll(new Specification<TaskFact>() {
             @Override
             public Predicate toPredicate(Root<TaskFact> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
@@ -103,10 +101,10 @@ public class TaskController extends BaseController{
             }
         },page);
         
-
-        model.addAttribute("tasklist", taskFactList);
+        
+        // model.addAttribute("tasklist", taskFactList);
         model.addAttribute("taskFactPage",taskFactpage);
-        model.addAttribute("page",page);
+        // model.addAttribute("page",page);
         return "tasklist";
     }
 

@@ -4,175 +4,176 @@
 <head>
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+
+    <script th:src="@{jquery/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>
+
 </head>
 
 <body>
-    <h1>任务监控</h1>
-    <table >
-        <tr>
-            <td>
-                <span th:text="*{statDtBegin}"></span>
-            </td>
-            <td>
-                <span th:text="*{statDtEnd}"></span>
-            </td>
-        </tr>
+    <div>
+        <h1>任务监控</h1>
+        <table>
+            <tr>
+                <td>
+                    <span th:text="*{statDtBegin}"></span>
+                </td>
+                <td>
+                    <span th:text="*{statDtEnd}"></span>
+                </td>
+            </tr>
 
-    </table>
-    <form action="#" id="form1" th:action="@{/updateTaskStatus}" method="post">
-        <table th:object="${taskFactModel}">
-            <tr>
-                <td>
-                    任务日期：<input type="text" name="statDtBegin" th:value="*{statDtBegin}"/> 至<input type="text" name="statDtEnd" th:value="*{statDtEnd}"/>
-                </td>
-                <td>
-
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    任务id：<input type="text" name="taskId" th:value="*{id.taskId}"/>
-                </td>
-                <td>
-                    任务状态：<input type="text" name="status" th:value="*{status}"/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    任务类型：<input type="text" name="taskType" th:value="*{taskType}"/>
-                </td>
-                <td>
-                    任务粒度：<input type="text" name="granularity" th:value="*{granularity}"/>
-                </td>
-            </tr>
         </table>
-        <input type="button" onclick="setstate()" value="重新计算" />
-        <input type="text" name="submitStatus" value="2"/>
-        <!-- <table border="1" style="border: 1px solid">
-            <thead>
-                <th><span><a href="#" onclick="selectAll()">全选</a> &nbsp;<a href="#" onclick="unselectAll()">取消</a></span></th>
-                <th>数据日期</th>
-                <th>任务id</th>
-                <th>任务类型</th>
-                <th>计算开始时间</th>
-                <th>计算结束时间</th>
-                <th>允许计算时间</th>
-                <th>创建时间</th>
-                <th>任务状态</th>
-            </thead>
-            <tbody th:each="task,taskstat:${tasklist}">
+        <form action="#" id="form1" th:action="@{/updateTaskStatus}" method="post">
+            <table th:object="${taskFactModel}" class=".table .table-condensed">
                 <tr>
                     <td>
-                        <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id.taskId}" />
-                        <input type="hidden" name="checkboxstatdt" th:value="${task.id.statDt}"/>
+                        任务日期：
+                        <input type="text" name="statDtBegin" th:value="*{statDtBegin}" /> 至
+                        <input type="text" name="statDtEnd" th:value="*{statDtEnd}" />
                     </td>
                     <td>
-                        <span th:text="${task.id.statDt}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.id.taskId}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.taskType}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.calBeginTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.calEndTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.allowCalTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.createtime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.status}" ></span>
+
                     </td>
                 </tr>
-            </tbody>
-        </table> -->
-
-        <table border="1" style="border: 1px solid">
-            <thead>
-                <th><span><a href="#" onclick="selectAll()">全选</a> &nbsp;<a href="#" onclick="unselectAll()">取消</a></span></th>
-                <th>数据日期</th>
-                <th>任务id</th>
-                <th>任务类型</th>
-                <th>计算开始时间</th>
-                <th>计算结束时间</th>
-                <th>允许计算时间</th>
-                <th>创建时间</th>
-                <th>任务状态</th>
-            </thead>
-            <tbody th:each="task,taskstat:${taskFactPage}">
                 <tr>
                     <td>
-                        <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id.taskId}" />
-                        <input type="hidden" name="checkboxstatdt" th:value="${task.id.statDt}"/>
-                        <!-- <input type="hidden" name="id" th:value="${task.id}" /> -->
+                        任务id：
+                        <input type="text" name="id.taskId" th:value="*{id.taskId}" />
                     </td>
                     <td>
-                        <span th:text="${task.id.statDt}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.id.taskId}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.taskType}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.calBeginTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.calEndTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.allowCalTime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.createtime}" ></span>
-                    </td>
-                    <td>
-                        <span th:text="${task.status}" ></span>
+                        任务状态：
+                        <!-- <input type="text" name="status" th:value="*{status}" /> -->
+                        <select name="status">
+                            <option th:value="*{status}" th:text="*{status}">请选择</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <div th:object="${pageInfo}">
-            第<input type="text"/>页
-            <input type="text"  th:value="*{pageNum}"/>
-            总页数：<input type="text" th:value="*{pageSize}"/>
-        </div>
-        
-    </form>
+                <tr>
+                    <td>
+                        任务类型：
+                        <input type="text" name="taskType" th:value="*{taskType}" />
+                    </td>
+                    <td>
+                        任务粒度：
+                        <input type="text" name="granularity" th:value="*{granularity}" />
+                    </td>
+                </tr>
+            </table>
+            <input type="button" onclick="setstate()" value="重新计算" />
+            <input type="text" name="submitStatus" value="2" />
+            <!-- <select>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2" selected="selected">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select> -->
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <th>
+                        <span>
+                            <a href="#" onclick="selectAll()">全选</a> &nbsp;
+                            <a href="#" onclick="unselectAll()">取消</a>
+                        </span>
+                    </th>
+                    <th>数据日期</th>
+                    <th>任务id</th>
+                    <th>任务类型</th>
+                    <th>计算开始时间</th>
+                    <th>计算结束时间</th>
+                    <th>允许计算时间</th>
+                    <th>创建时间</th>
+                    <th>任务状态</th>
+                </thead>
+                <tbody>
+                    <tr th:each="task,taskstat:${taskFactPage}">
+                        <td>
+                            <input type="checkbox" name="checkboxid" class="checkboxid" th:value="${task.id.taskId}" />
+                            <input type="hidden" name="checkboxstatdt" th:value="${task.id.statDt}" />
+                            <!-- <input type="hidden" name="id" th:value="${task.id}" /> -->
+                        </td>
+                        <td>
+                            <span th:text="${task.id.statDt}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.id.taskId}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.taskType}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.calBeginTime}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.calEndTime}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.allowCalTime}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.createtime}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${task.status}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:object="${pageInfo}">
+                第
+                <input type="text" name="pageNum" th:value="*{pageNum}" />页 页大小：
+                <input type="text" name="pageSize" th:value="*{pageSize}" />
+            </div>
+            <div th:object="${taskFactPage}">
+                总记录数：
+                <span th:text="*{totalElements}"></span>
+                总页数：
+                <span th:text="*{totalPages}"></span>
+            </div>
+
+        </form>
+    </div>
+
     <script th:inline="javascript" type="text/javascript">
         document.onkeydown = function (e) {
-            if(!e) {
+            if (!e) {
                 e = windows.event;
             }
-            if(( e.keyCode || e.which ) == 13) {
+            if ((e.keyCode || e.which) == 13) {
                 search();
             }
         }
+
         function search() {
             document.getElementById("form1").action = "/tasklist";
             document.getElementById("form1").submit();
         }
-        function setstate(){
+
+        function setstate() {
             document.getElementById("form1").action = "/updateTaskStatus";
             document.getElementById("form1").submit();
         }
+
         function selectAll() {
             var checkboxObjs = document.getElementsByName("checkboxid");
-            /*<![CDATA[*/for(var i=0 ; i < checkboxObjs.length ; i++) {/*]]>*/
+            /*<![CDATA[*/
+            for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
                 checkboxObjs[i].checked = true;
             }
         }
+
         function unselectAll() {
             var checkboxObjs = document.getElementsByName("checkboxid");
-            /*<![CDATA[*/for(var i=0 ; i < checkboxObjs.length ; i++) {/*]]>*/
+            /*<![CDATA[*/
+            for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
                 checkboxObjs[i].checked = false;
             }
         }

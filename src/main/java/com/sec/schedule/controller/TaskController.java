@@ -103,7 +103,7 @@ public class TaskController extends BaseController{
         
         
         // model.addAttribute("tasklist", taskFactList);
-        model.addAttribute("taskFactPage",taskFactpage);
+        model.addAttribute("page",taskFactpage);
         // model.addAttribute("page",page);
         return "tasklist";
     }

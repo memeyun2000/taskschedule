@@ -57,7 +57,7 @@
                     <tr>
                         <td>
                             任务日期：
-                            <input type="text" name="statDtBegin" th:value="*{statDtBegin}" /> 至
+                            <input type="text" class="form-control" name="statDtBegin" th:value="*{statDtBegin}" /> 至
                             <input type="text" name="statDtEnd" th:value="*{statDtEnd}" />
                         </td>
                         <td>
@@ -108,7 +108,7 @@
                     <input type="text" name="submitStatus" value="2" /> -->
                     <div class="input-group pull-right col-xs-2" style="margin:30px">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" onclick="setstate()" type="button">重新计算</button>
+                            <button class="btn btn-danger" onclick="setstate()" type="button">重新计算</button>
                         </span>
                         <input type="text" name="submitStatus" value="2" class="form-control" />
                     </div>

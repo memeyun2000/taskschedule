@@ -63,9 +63,8 @@ public class TaskController extends BaseController{
             //默认查询当天的任务
             taskFactModel.setStatDtBegin(statDt);
             taskFactModel.setStatDtEnd(statDt);
-        } else {
-
         }
+
 
         //点击查询时触发的逻辑
         taskFactpage = taskFactDao.findAll(new Specification<TaskFact>() {

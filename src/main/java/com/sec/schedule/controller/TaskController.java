@@ -54,13 +54,9 @@ public class TaskController extends BaseController{
                            @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
                            @ModelAttribute(value="pageInfo") PageInfo pageInfo,
                            Model model) {
-        logger.debug("page:{},pageSize:{}", pageInfo.getPageNum(),pageInfo.getPageSize());
-        
         Pageable page = getPageable(pageInfo);
-        logger.debug("taskFactModel:{}" ,taskFactModel.getId().getStatDt());
-        // List<TaskFact> taskFactList = null;
         Page<TaskFact> taskFactpage = null;
-        
+
         //默认搜索内容
         if(newSearchFlag.equals("1")) {
             String statDt = DateUtils.getCurrentDateStr();
@@ -70,7 +66,7 @@ public class TaskController extends BaseController{
         } else {
 
         }
-        
+
         //点击查询时触发的逻辑
         taskFactpage = taskFactDao.findAll(new Specification<TaskFact>() {
             @Override
@@ -100,11 +96,7 @@ public class TaskController extends BaseController{
 
             }
         },page);
-        
-        
-        // model.addAttribute("tasklist", taskFactList);
         model.addAttribute("page",taskFactpage);
-        // model.addAttribute("page",page);
         return "tasklist";
     }
 
@@ -117,68 +109,17 @@ public class TaskController extends BaseController{
     }
 
 
-    @RequestMapping(value="/searchTasklist",method = RequestMethod.POST)
-    public String searchTasklist(@RequestParam(required = false) String statDtBegin ,
-                                 @RequestParam(required = false) String statDtEnd ,
-                                 @RequestParam(required = false) String taskId ,
-                                 @RequestParam(required = false) String taskType ,
-                                 @RequestParam(required = false) String granularity ,
-                                 @RequestParam(required = false) String status ,
-                                  Model model) {
-
-        List<TaskFact> taskFactList = taskFactDao.findAll(new Specification<TaskFact>() {
-            @Override
-            public Predicate toPredicate(Root<TaskFact> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
-                List<Predicate> list = new ArrayList<Predicate>();
-                if(StringUtils.isNotBlank(statDtBegin)) {
-                    list.add(cb.greaterThanOrEqualTo(root.get("id").get("statDt").as(String.class),statDtBegin));
-                }
-                if(StringUtils.isNotBlank(statDtEnd)) {
-                    list.add(cb.lessThanOrEqualTo(root.get("id").get("statDt").as(String.class),statDtEnd));
-                }
-                if(StringUtils.isNotBlank(taskId)) {
-                    list.add(cb.like(root.get("id").get("taskId").as(String.class),"%" + taskId + "%"));
-                }
-                if(StringUtils.isNotBlank(taskType)) {
-                    list.add(cb.like(root.get("taskType").as(String.class),"%" + taskType + "%"));
-                }
-                if(StringUtils.isNotBlank(granularity)) {
-                    list.add(cb.equal(root.get("granularity").as(String.class),granularity ));
-                }
-                if(StringUtils.isNotBlank(status)) {
-                    list.add(cb.equal(root.get("status").as(String.class),status));
-                }
-
-                Predicate [] p = new Predicate[list.size()];
-                return cb.and(list.toArray(p));
-
-            }
-        });
-        model.addAttribute("statDtBegin", statDtBegin);
-        model.addAttribute("statDtEnd", statDtEnd);
-        model.addAttribute("taskId", taskId);
-        model.addAttribute("taskType", taskType);
-        model.addAttribute("granularity", granularity);
-        model.addAttribute("status", status);
-        model.addAttribute("tasklist",taskFactList);
-        return "tasklist";
-    }
-
 
     @RequestMapping(value="/updateTaskStatus",method=RequestMethod.POST)
     public String updateTaskStatus(@RequestParam(required = false) String[] checkboxid,
                                     @RequestParam(required = false) String[] checkboxstatdt,
                                    @RequestParam(required = false) String submitStatus,
-                                   @RequestParam(required = false) String statDtBegin ,
-                                   @RequestParam(required = false) String statDtEnd ,
-                                   @RequestParam(required = false) String taskId ,
-                                   @RequestParam(required = false) String taskType ,
-                                   @RequestParam(required = false) String granularity ,
-                                   @RequestParam(required = false) String status,
+                                   @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
+                                   @ModelAttribute(value="pageInfo") PageInfo pageInfo,
                                      Model model) {
         List<TaskFact> list = new ArrayList<>();
 
-        
+
         for(int i=0 ; i< checkboxid.length ; i++) {
             CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
             taskFactId.setTaskId(checkboxid[i]);
@@ -191,19 +132,7 @@ public class TaskController extends BaseController{
             taskFactDao.save(list);
         }
 
-        model.addAttribute("statDtBegin", statDtBegin);
-        model.addAttribute("statDtEnd", statDtEnd);
-        model.addAttribute("taskId", taskId);
-        model.addAttribute("taskType", taskType);
-        model.addAttribute("granularity", granularity);
-        model.addAttribute("status", status);
-        return "forward:/searchTasklist";
-    }
-
-    @RequestMapping(value="/test",method=RequestMethod.GET)
-    public String test(@ModelAttribute(value="message")Message message) {
-        message.setInfo("hello world");
-        return "taskSparkJobInfo";
+        return "forward:/tasklist";
     }
 
 }

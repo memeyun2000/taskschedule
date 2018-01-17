@@ -17,15 +17,17 @@
 
 <body>
     <form action="#" id="form1" th:action="@{/updateTaskStatus}" method="post">
-        <div class="">
+        <div class="container-fluid">
             <ol class="breadcrumb">
                 <li>
                     <a href="#">Home</a>
                 </li>
-                <li>
-                    <a href="#">2013</a>
+                <li class="active">
+                    <a href="taskSparkJobInfo">任务监控</a>
                 </li>
-                <li class="active">十一月</li>
+                <li>
+                  <a href="#">spark任务参数</a>
+                </li>
             </ol>
             <h1>
                 <span>任务监控</span>
@@ -53,49 +55,59 @@
 
             </div>
             <div class="row">
-                <table th:object="${taskFactModel}" class="table table-condensed">
-                    <tr>
-                        <td>
-                            任务日期：
-                            <input type="text" class="form-control" name="statDtBegin" th:value="*{statDtBegin}" /> 至
-                            <input type="text" name="statDtEnd" th:value="*{statDtEnd}" />
-                        </td>
-                        <td>
-                            任务类型：
-                            <input type="text" name="taskType" th:value="*{taskType}" />
-                        </td>
-                        <td>
-                            任务粒度：
-                            <input type="text" name="granularity" th:value="*{granularity}" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            任务id：
-                            <input type="text" name="id.taskId" th:value="*{id.taskId}" />
-                        </td>
-                        <td>
-                            任务状态：
-                            <!-- <input type="text" name="status" th:value="*{status}" /> -->
-                            <select name="status">
-                                <option th:value="*{status}" th:text="*{status}">请选择</option>
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </td>
-                        <td>
+              <div class="" th:object="${taskFactModel}">
+                <div class="row"  >
+                  <div class="col-xs-1">
+                    任务日期:
+                  </div>
+                  <div class="col-xs-3">
+                    <div class="col-xs-5">
+                      <input type="text" class="form-control" name="statDtBegin" th:value="*{statDtBegin}" />
+                    </div>
+                    <div class="col-xs-2">
+                      至
+                    </div>
+                    <div class="col-xs-5">
+                      <input type="text" class="form-control" name="statDtEnd" th:value="*{statDtEnd}" />
+                    </div>
+                  </div>
+                  <div class="col-xs-1">
+                    任务类型：
+                  </div>
+                  <div class="col-xs-3">
+                    <input type="text" class="form-control" name="taskType" th:value="*{taskType}" />
+                  </div>
+                  <div class="col-xs-1">
+                    任务粒度：
+                  </div>
+                  <div class="col-xs-3">
+                    <input type="text" class="form-control" name="granularity" th:value="*{granularity}" />
+                  </div>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td> </td>
-                        <td> </td>
-                        <td> </td>
-                    </tr>
-                </table>
+
+                </div>
+                <div class="row">
+                  <div class="col-xs-1">
+                    任务id：
+                  </div>
+                  <div class="col-xs-3">
+                    <input type="text" class="form-control" name="id.taskId" th:value="*{id.taskId}" />
+                  </div>
+                  <div class="col-xs-1">
+                    任务状态：
+                  </div>
+                  <div class="col-xs-3">
+                    <input type="text" class="form-control" name="status" th:value="*{status}" />
+                  </div>
+                  <div class="col-xs-1">
+
+                  </div>
+                  <div class="col-xs-3">
+
+                  </div>
+                </div>
+              </div>
+
             </div>
             <div class="row">
                 <div class="col-xs-6">

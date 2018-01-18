@@ -11,27 +11,13 @@
 
     <script th:src="@{common/common-page.js}"></script>
     <script th:src="@{js/utils/DateUtil.js}"></script>
-    <script th:src="@{js/tasklist.js}"></script>
 
 </head>
 
 <body>
     <form action="#" id="form1" th:action="@{/updateTaskStatus}" method="post">
+      <div th:replace="fragment/navbar :: navbar"></div>
         <div class="container-fluid">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#">Home</a>
-                </li>
-                <li class="active">
-                    <a href="tasklist">任务监控</a>
-                </li>
-                <li>
-                  <a href="taskSparkJobInfo">spark任务参数</a>
-                </li>
-            </ol>
-            <h1>
-                <span>任务监控</span>
-            </h1>
             <div class="row">
                 <div class="col-xs-6">
 
@@ -54,55 +40,58 @@
                 </div>
 
             </div>
-            <div class="row">
+            <div class="row form-inline">
               <div class="" th:object="${taskFactModel}">
-                <div class="row"  >
+                <div class="row ">
                   <div class="col-xs-1">
-                    任务日期:
+
                   </div>
-                  <div class="col-xs-3">
-                    <div class="col-xs-5">
-                      <input type="text" class="form-control" name="statDtBegin" th:value="*{statDtBegin}" />
-                    </div>
-                    <div class="col-xs-2">
-                      至
-                    </div>
-                    <div class="col-xs-5">
-                      <input type="text" class="form-control" name="statDtEnd" th:value="*{statDtEnd}" />
+                  <div class="col-xs-3 ">
+                    <div class="form-group">
+                      <label>任务日期:</label>
+                      <input type="text" class="form-control" name="statDtBegin" style="width:30%"  th:value="*{statDtBegin}" />
+                      -
+                      <input type="text" class="form-control" name="statDtEnd" style="width:30%"  th:value="*{statDtEnd}" />
                     </div>
                   </div>
-                  <div class="col-xs-1">
-                    任务类型：
+
+                  <div class="col-xs-3 ">
+                    <div class="form-group">
+                      <label for="">任务类型：</label>
+                      <input type="text" class="form-control" name="taskType" th:value="*{taskType}" />
+                    </div>
                   </div>
-                  <div class="col-xs-3">
-                    <input type="text" class="form-control" name="taskType" th:value="*{taskType}" />
-                  </div>
-                  <div class="col-xs-1">
-                    任务粒度：
-                  </div>
-                  <div class="col-xs-3">
+
+                  <div class="col-xs-3 ">
+                    <div class="form-group">
+                      <label for="">任务粒度：</label>
+                    </div>
                     <input type="text" class="form-control" name="granularity" th:value="*{granularity}" />
                   </div>
+                  <div class="col-xs-2">
 
+                  </div>
 
                 </div>
+                <br/>
                 <div class="row">
-                  <div class="col-xs-1">
-                    任务id：
-                  </div>
-                  <div class="col-xs-3">
-                    <input type="text" class="form-control" name="id.taskId" th:value="*{id.taskId}" />
-                  </div>
-                  <div class="col-xs-1">
-                    任务状态：
-                  </div>
-                  <div class="col-xs-3">
-                    <input type="text" class="form-control" name="status" th:value="*{status}" />
-                  </div>
                   <div class="col-xs-1">
 
                   </div>
                   <div class="col-xs-3">
+                    <div class="form-group">
+                      <label for="">任务id：</label>
+                    </div>
+                    <input type="text" class="form-control" name="id.taskId" th:value="*{id.taskId}" />
+                  </div>
+                  <div class="col-xs-3">
+                    <label for="">任务状态：</label>
+                    <input type="text" class="form-control" name="status" th:value="*{status}" />
+                  </div>
+                  <div class="col-xs-3">
+
+                  </div>
+                  <div class="col-xs-2">
 
                   </div>
                 </div>
@@ -112,15 +101,16 @@
             <div class="row">
                 <div class="col-xs-6">
                     <!-- 分页 -->
-                    <div th:include="fragment_page :: pagination"></div>
+                    <div th:replace="fragment/page :: pagination"></div>
                 </div>
                 <div class="col-xs-6">
-                    <!-- <div class="pull-right btn-group" style="margin-top:30px">
-                    <button type="button" class="btn btn-default" onclick="setstate()"></button>
-                    <input type="text" name="submitStatus" value="2" /> -->
-                    <div class="input-group pull-right col-xs-2" style="margin:30px">
+
+                    <div class="input-group pull-right col-xs-3" style="margin:30px">
+
                         <span class="input-group-btn">
-                            <button class="btn btn-danger" onclick="setstate()" type="button">重新计算</button>
+                          <button class="btn btn-primary" type="button" id="search" style="margin-right:5px">搜索</button>
+
+                          <button class="btn btn-danger"  type="button" id="setstate">设置状态</button>
                         </span>
                         <input type="text" name="submitStatus" value="2" class="form-control" />
                     </div>
@@ -129,7 +119,7 @@
 
             <div class="row">
                 <!-- 数据 -->
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped table-condensed">
                     <thead>
                         <th>
                             <span>
@@ -183,43 +173,9 @@
             </div>
 
         </div>
+        <script th:src="@{js/tasklist.js}"></script>
     </form>
-    <script th:inline="javascript" type="text/javascript">
-        document.onkeydown = function (e) {
-            if (!e) {
-                e = windows.event;
-            }
-            if ((e.keyCode || e.which) == 13) {
-                search();
-            }
-        }
 
-        function search() {
-            document.getElementById("form1").action = "/tasklist";
-            document.getElementById("form1").submit();
-        }
-
-        function setstate() {
-            document.getElementById("form1").action = "/updateTaskStatus";
-            document.getElementById("form1").submit();
-        }
-
-        function selectAll() {
-            var checkboxObjs = document.getElementsByName("checkboxid");
-            /*<![CDATA[*/
-            for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
-                checkboxObjs[i].checked = true;
-            }
-        }
-
-        function unselectAll() {
-            var checkboxObjs = document.getElementsByName("checkboxid");
-            /*<![CDATA[*/
-            for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
-                checkboxObjs[i].checked = false;
-            }
-        }
-    </script>
 </body>
 
 </html>

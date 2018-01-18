@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+  <body>
+    <div th:fragment="navbar">
+      <ol class="breadcrumb">
+          <li>
+              <a href="#">Home</a>
+          </li>
+          <li class="active dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">任务监控<b class="caret"></b></a>
+              <ol class="dropdown-menu">
+                <li>
+                  <a href="tasklist">任务监控</a>
+                </li>
+                <li>
+                  <a href="taskSparkJobInfo">spark任务参数</a>
+                </li>
+              </ol>
+          </li>
+          <li>
+            <a href="taskSparkJobInfo">spark任务参数</a>
+          </li>
+      </ol>
+    </div>
+  </body>
+</html>

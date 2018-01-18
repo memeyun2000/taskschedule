@@ -12,18 +12,9 @@
 </head>
 
 <body>
+  <div th:replace="fragment/navbar :: navbar"></div>
   <div class="container-fluid">
-    <ol class="breadcrumb">
-      <li>
-        <a href="#">Home</a>
-      </li>
-      <li class="active">
-        <a href="tasklist">任务监控</a>
-      </li>
-      <li>
-        <a href="taskSparkJobInfo">spark任务参数</a>
-      </li>
-    </ol>
+
 
     <h1>spark任务参数</h1>
     <table class="table table-bordered table-striped table-condensed">

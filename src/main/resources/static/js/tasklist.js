@@ -1,4 +1,41 @@
 $(document).ready(function () {
+    /** init **/
+    function init() {
+      document.onkeydown = function (e) {
+          if (!e) {
+              e = windows.event;
+          }
+          if ((e.keyCode || e.which) == 13) {
+              search();
+          }
+      }
+    }
+
+    let search = function() {
+        document.getElementById("form1").action = "/tasklist";
+        document.getElementById("form1").submit();
+    }
+
+    let setstate = function() {
+        document.getElementById("form1").action = "/updateTaskStatus";
+        document.getElementById("form1").submit();
+    }
+
+    function selectAll() {
+        var checkboxObjs = document.getElementsByName("checkboxid");
+        /*<![CDATA[*/
+        for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
+            checkboxObjs[i].checked = true;
+        }
+    }
+
+    function unselectAll() {
+        var checkboxObjs = document.getElementsByName("checkboxid");
+        /*<![CDATA[*/
+        for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
+            checkboxObjs[i].checked = false;
+        }
+    }
 
     // 点击日期切换事件
     $(".changeStatDt").bind("click", function () {
@@ -25,4 +62,13 @@ $(document).ready(function () {
         document.getElementById("form1").action = "/tasklist";
         document.getElementById("form1").submit();
     });
+
+    //搜索
+    $("#search").bind("click",search);
+
+    //设置任务状态
+    $("#setstate").bind("click",setstate);
+
+
+    init();
 });

@@ -89,6 +89,12 @@ public class TaskController extends BaseController{
                 if(StringUtils.isNotBlank(taskFactModel.getStatus())) {
                     list.add(cb.equal(root.get("status").as(String.class),taskFactModel.getStatus()));
                 }
+                if(StringUtils.isNotBlank(taskFactModel.getPrevTaskId())) {
+                  // list.add(cb.in)
+                }
+                if(StringUtils.isNotBlank(taskFactModel.getNextTaskId())) {
+                  
+                }
 
                 Predicate [] p = new Predicate[list.size()];
                 return cb.and(list.toArray(p));

@@ -1,0 +1,1 @@
+java -jar /share/handbook/embed_databases/derby/db-derby-10.14.1.0-bin/lib/derbyrun.jar server start

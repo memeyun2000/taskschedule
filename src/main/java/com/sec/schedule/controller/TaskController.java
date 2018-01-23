@@ -2,6 +2,7 @@ package com.sec.schedule.controller;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.sec.schedule.dao.TaskImplSparkJobDao;
@@ -25,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.gson.Gson;
+import com.sec.schedule.dao.TaskDependDao;
 import com.sec.schedule.dao.TaskFactDao;
 import com.sec.schedule.dict.TaskStatus;
+import com.sec.schedule.entity.TaskDepend;
 import com.sec.schedule.entity.TaskFact;
 import com.sec.schedule.model.CompositeIdTaskFact;
 import com.sec.schedule.model.Message;
@@ -38,9 +41,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 @Controller
-public class TaskController extends BaseController{
+public class TaskController extends BaseController {
     public static Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     @Autowired
@@ -49,62 +53,75 @@ public class TaskController extends BaseController{
     @Autowired
     TaskImplSparkJobDao taskImplSparkJobDao;
 
+    @Autowired
+    TaskDependDao taskDependDao;
+
     @RequestMapping("/tasklist")
-    public String tasklist(@RequestParam(required=false,defaultValue="0") String newSearchFlag ,
-                           @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
-                           @ModelAttribute(value="pageInfo") PageInfo pageInfo,
-                           Model model) {
+    public String tasklist(@RequestParam(required = false, defaultValue = "0") String newSearchFlag,
+            @ModelAttribute(value = "taskFactModel") TaskFactModel taskFactModel,
+            @ModelAttribute(value = "pageInfo") PageInfo pageInfo, Model model) {
         Pageable page = getPageable(pageInfo);
         Page<TaskFact> taskFactpage = null;
 
         //默认搜索内容
-        if(newSearchFlag.equals("1")) {
+        if (newSearchFlag.equals("1")) {
             String statDt = DateUtils.getCurrentDateStr();
             //默认查询当天的任务
             taskFactModel.setStatDtBegin(statDt);
             taskFactModel.setStatDtEnd(statDt);
         }
 
-
         //点击查询时触发的逻辑
         taskFactpage = taskFactDao.findAll(new Specification<TaskFact>() {
             @Override
             public Predicate toPredicate(Root<TaskFact> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> list = new ArrayList<Predicate>();
-                if(StringUtils.isNotBlank(taskFactModel.getStatDtBegin())) {
-                    list.add(cb.greaterThanOrEqualTo(root.get("id").get("statDt").as(String.class),taskFactModel.getStatDtBegin()));
+                if (StringUtils.isNotBlank(taskFactModel.getStatDtBegin())) {
+                    list.add(cb.greaterThanOrEqualTo(root.get("id").get("statDt").as(String.class),
+                            taskFactModel.getStatDtBegin()));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getStatDtEnd())) {
-                    list.add(cb.lessThanOrEqualTo(root.get("id").get("statDt").as(String.class),taskFactModel.getStatDtEnd()));
+                if (StringUtils.isNotBlank(taskFactModel.getStatDtEnd())) {
+                    list.add(cb.lessThanOrEqualTo(root.get("id").get("statDt").as(String.class),
+                            taskFactModel.getStatDtEnd()));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getId().getTaskId())) {
-                    list.add(cb.like(root.get("id").get("taskId").as(String.class),"%" + taskFactModel.getId().getTaskId() + "%"));
+                if (StringUtils.isNotBlank(taskFactModel.getId().getTaskId())) {
+                    list.add(cb.like(root.get("id").get("taskId").as(String.class),
+                            "%" + taskFactModel.getId().getTaskId() + "%"));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getTaskType())) {
-                    list.add(cb.like(root.get("taskType").as(String.class),"%" + taskFactModel.getTaskType() + "%"));
+                if (StringUtils.isNotBlank(taskFactModel.getTaskType())) {
+                    list.add(cb.like(root.get("taskType").as(String.class), "%" + taskFactModel.getTaskType() + "%"));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getGranularity())) {
-                    list.add(cb.equal(root.get("granularity").as(String.class),taskFactModel.getGranularity() ));
+                if (StringUtils.isNotBlank(taskFactModel.getGranularity())) {
+                    list.add(cb.equal(root.get("granularity").as(String.class), taskFactModel.getGranularity()));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getStatus())) {
-                    list.add(cb.equal(root.get("status").as(String.class),taskFactModel.getStatus()));
+                if (StringUtils.isNotBlank(taskFactModel.getStatus())) {
+                    list.add(cb.equal(root.get("status").as(String.class), taskFactModel.getStatus()));
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getPrevTaskId())) {
-                  // list.add(cb.in)
+                if (StringUtils.isNotBlank(taskFactModel.getPrevTaskId())) {
+                    List<TaskDepend> _dependList = taskDependDao
+                            .findDependTaskListByTaskId(taskFactModel.getPrevTaskId());
+                    if (_dependList.size() > 0) {
+                        In<String> in = cb.in(root.get("id").get("taskId"));
+
+                        Iterator<TaskDepend> iter = _dependList.iterator();
+                        while (iter.hasNext()) {
+                            in.value(iter.next().getId().getDependTaskId());
+                        }
+                        list.add(in);
+                    }
                 }
-                if(StringUtils.isNotBlank(taskFactModel.getNextTaskId())) {
-                  
+                if (StringUtils.isNotBlank(taskFactModel.getNextTaskId())) {
+
                 }
 
-                Predicate [] p = new Predicate[list.size()];
+                Predicate[] p = new Predicate[list.size()];
                 return cb.and(list.toArray(p));
 
             }
-        },page);
-        model.addAttribute("page",taskFactpage);
+        }, page);
+        model.addAttribute("page", taskFactpage);
         return "tasklist";
     }
-
 
     @RequestMapping("/taskSparkJobInfo")
     public String taskSparkJobList(Model model) {
@@ -113,19 +130,15 @@ public class TaskController extends BaseController{
         return "taskSparkJobInfo";
     }
 
-
-
-    @RequestMapping(value="/updateTaskStatus",method=RequestMethod.POST)
+    @RequestMapping(value = "/updateTaskStatus", method = RequestMethod.POST)
     public String updateTaskStatus(@RequestParam(required = false) String[] checkboxid,
-                                    @RequestParam(required = false) String[] checkboxstatdt,
-                                   @RequestParam(required = false) String submitStatus,
-                                   @ModelAttribute(value="taskFactModel") TaskFactModel taskFactModel,
-                                   @ModelAttribute(value="pageInfo") PageInfo pageInfo,
-                                     Model model) {
+            @RequestParam(required = false) String[] checkboxstatdt,
+            @RequestParam(required = false) String submitStatus,
+            @ModelAttribute(value = "taskFactModel") TaskFactModel taskFactModel,
+            @ModelAttribute(value = "pageInfo") PageInfo pageInfo, Model model) {
         List<TaskFact> list = new ArrayList<>();
 
-
-        for(int i=0 ; i< checkboxid.length ; i++) {
+        for (int i = 0; i < checkboxid.length; i++) {
             CompositeIdTaskFact taskFactId = new CompositeIdTaskFact();
             taskFactId.setTaskId(checkboxid[i]);
             taskFactId.setStatDt(checkboxstatdt[i]);
@@ -133,21 +146,17 @@ public class TaskController extends BaseController{
             taskFact.setStatus(submitStatus);
             list.add(taskFact);
         }
-        if(list.size() >0 ) {
+        if (list.size() > 0) {
             taskFactDao.save(list);
         }
 
         return "forward:/tasklist";
     }
 
-
-
-
     // Rest request
-    @RequestMapping(value="taskDependTask")
+    @RequestMapping(value = "taskDependTask")
     public String taskDepend() {
-      return "";
+        return "";
     }
-
 
 }

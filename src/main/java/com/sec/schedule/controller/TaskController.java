@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.sec.schedule.dao.TaskImplSparkJobDao;
 import com.sec.schedule.entity.TaskImplSparkJob;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.gson.Gson;
-import com.sec.schedule.dao.TaskDependDao;
+import com.sec.schedule.dao.TaskDependRepo;
 import com.sec.schedule.dao.TaskFactDao;
 import com.sec.schedule.dict.TaskStatus;
 import com.sec.schedule.entity.TaskDepend;
@@ -54,7 +55,7 @@ public class TaskController extends BaseController {
     TaskImplSparkJobDao taskImplSparkJobDao;
 
     @Autowired
-    TaskDependDao taskDependDao;
+    TaskDependRepo taskDependRepo;
 
     @RequestMapping("/tasklist")
     public String tasklist(@RequestParam(required = false, defaultValue = "0") String newSearchFlag,
@@ -98,20 +99,30 @@ public class TaskController extends BaseController {
                     list.add(cb.equal(root.get("status").as(String.class), taskFactModel.getStatus()));
                 }
                 if (StringUtils.isNotBlank(taskFactModel.getPrevTaskId())) {
-                    List<TaskDepend> _dependList = taskDependDao
-                            .findDependTaskListByTaskId(taskFactModel.getPrevTaskId());
-                    if (_dependList.size() > 0) {
+                    Set<String> _prevTaskIdList = taskDependRepo.findAllPrevDependTask(taskFactModel.getPrevTaskId());
+                    _prevTaskIdList.add(taskFactModel.getPrevTaskId());
+                    if (_prevTaskIdList.size() > 0) {
                         In<String> in = cb.in(root.get("id").get("taskId"));
 
-                        Iterator<TaskDepend> iter = _dependList.iterator();
+                        Iterator<String> iter = _prevTaskIdList.iterator();
                         while (iter.hasNext()) {
-                            in.value(iter.next().getId().getDependTaskId());
+                            in.value(iter.next());
                         }
                         list.add(in);
                     }
                 }
                 if (StringUtils.isNotBlank(taskFactModel.getNextTaskId())) {
+                    Set<String> _taskIdList = taskDependRepo.findAllNextDependTask(taskFactModel.getNextTaskId());
+                    _taskIdList.add(taskFactModel.getNextTaskId());
+                    if ( _taskIdList.size() > 0) {
+                        In<String> in = cb.in(root.get("id").get("taskId"));
 
+                        Iterator<String> iter =  _taskIdList.iterator();
+                        while (iter.hasNext()) {
+                            in.value(iter.next());
+                        }
+                        list.add(in);
+                    }
                 }
 
                 Predicate[] p = new Predicate[list.size()];

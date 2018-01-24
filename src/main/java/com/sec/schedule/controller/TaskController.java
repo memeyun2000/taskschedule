@@ -60,7 +60,8 @@ public class TaskController extends BaseController {
     @RequestMapping("/tasklist")
     public String tasklist(@RequestParam(required = false, defaultValue = "0") String newSearchFlag,
             @ModelAttribute(value = "taskFactModel") TaskFactModel taskFactModel,
-            @ModelAttribute(value = "pageInfo") PageInfo pageInfo, Model model) {
+            @ModelAttribute(value = "pageInfo") PageInfo pageInfo, 
+            Model model) {
         Pageable page = getPageable(pageInfo);
         Page<TaskFact> taskFactpage = null;
 

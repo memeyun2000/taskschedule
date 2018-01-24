@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+
+    <script th:src="@{jquery/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- <script th:src="@{common/common-page.js}"></script>
+    <script th:src="@{js/utils/DateUtil.js}"></script> -->
+
+</head>
+
+<body>
+    <form action="#" id="form1" th:action="@{/modelList}" method="post">
+        <div th:replace="fragment/navbar :: navbar"></div>
+        <div class="container-fluid">
+            <div class="row form-inline">
+                <div class="" th:object="${taskFactModel}">
+                    <div class="row ">
+                        <div class="col-xs-1">
+
+                        </div>
+                        <div class="col-xs-3 ">
+                            <div class="form-group">
+                                <label>任务日期:</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-3 ">
+                            <div class="form-group">
+                                <label for="">任务类型：</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 ">
+                        </div>
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <!-- 数据 -->
+                <table class="table table-bordered table-striped table-condensed">
+                    <thead>
+                        <th>序号<th>
+                        <th>数据日期</th>
+                        <th>任务id</th>
+                        <th>任务类型</th>
+                        <th>计算开始时间</th>
+                        <th>计算结束时间</th>
+                        <th>允许计算时间</th>
+                        <th>创建时间</th>
+                        <th>任务状态</th>
+                    </thead>
+                    <tbody>
+                        <tr th:each="model,modelstat:${modelList}">
+                            <td>
+                                1
+                            </td>
+                            <td>
+                                <span th:text="${model.id.tableSchema}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${model.id.tableName}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${model.descr}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${model.id.databaseName}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${model.tableType}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${model.memo}"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <script th:src="@{js/modelList.js}"></script>
+    </form>
+
+</body>
+
+</html>

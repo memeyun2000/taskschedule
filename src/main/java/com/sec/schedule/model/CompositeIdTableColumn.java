@@ -6,24 +6,25 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class CompositeIdTableModel implements Serializable{
-    private static final long serialVersionUID = 38293891232L;
-
+public class CompositeIdTableColumn implements Serializable{
+    private static final long serialVersionUID = 39023893881L;
     @Column(length=20)
     protected String databaseName;
     @Column(length=20)
     protected String tableSchema;
     @Column(length=50)
     protected String tableName;
-
+    @Column(length=50)
+    private String columnName;
 
     @Override
     public boolean equals(Object obj) {
         // return obj instanceof CompositeIdTaskFact;
-        return obj instanceof CompositeIdTableModel 
-                && databaseName.equals(((CompositeIdTableModel)obj).databaseName)
-                && tableSchema.equals(((CompositeIdTableModel)obj).tableSchema)
-                && tableName.equals(((CompositeIdTableModel)obj).tableName); 
+        return obj instanceof CompositeIdTableColumn 
+                && databaseName.equals(((CompositeIdTableColumn)obj).databaseName)
+                && tableSchema.equals(((CompositeIdTableColumn)obj).tableSchema)
+                && columnName.equals(((CompositeIdTableColumn)obj).columnName)
+                && tableName.equals(((CompositeIdTableColumn)obj).tableName); 
     }
 
     /**
@@ -40,16 +41,29 @@ public class CompositeIdTableModel implements Serializable{
         result = 17 * 31 + databaseName.hashCode();
         result = 17 * 31^2 + tableSchema.hashCode();
         result = 17 * 31^3 + tableName.hashCode();
+        result = 17 * 31^4 + columnName.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "{database name:" + databaseName + ",table schema:"+ tableSchema + ",table name:" + tableName + "}";
+        return "{database name:" + databaseName + ",table schema:"+ tableSchema + ",table name:" + tableName + ",column name" + columnName + "}";
     }
 
 
-    //---  getter and setter ---//
+    /**
+     * @return the columnName
+     */
+    public String getColumnName() {
+        return columnName;
+    }
+
+    /**
+     * @param columnName the columnName to set
+     */
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
 
     /**
      * @return the databaseName
@@ -87,5 +101,5 @@ public class CompositeIdTableModel implements Serializable{
     public void setTableSchema(String tableSchema) {
         this.tableSchema = tableSchema;
     }
-
+    
 }

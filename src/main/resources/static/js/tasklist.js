@@ -21,18 +21,16 @@ $(document).ready(function () {
         document.getElementById("form1").submit();
     }
 
-    function selectAll() {
+    let selectAll = function() {
         var checkboxObjs = document.getElementsByName("checkboxid");
-        /*<![CDATA[*/
-        for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
+        for (var i = 0; i < checkboxObjs.length; i++) {
             checkboxObjs[i].checked = true;
         }
     }
 
-    function unselectAll() {
+    let unselectAll = function() {
         var checkboxObjs = document.getElementsByName("checkboxid");
-        /*<![CDATA[*/
-        for (var i = 0; i < checkboxObjs.length; i++) { /*]]>*/
+        for (var i = 0; i < checkboxObjs.length; i++) {
             checkboxObjs[i].checked = false;
         }
     }
@@ -69,6 +67,7 @@ $(document).ready(function () {
     //设置任务状态
     $("#setstate").bind("click",setstate);
 
-
+    $("#selectAll").bind("click",selectAll);
+    $("#unselectAll").bind("click",unselectAll);
     init();
 });

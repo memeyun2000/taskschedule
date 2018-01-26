@@ -9,6 +9,7 @@
     <script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
 
+    <script th:src="@{/js/model/modelList.js}"></script>
     <!-- <script th:src="@{common/common-page.js}"></script>
     <script th:src="@{js/utils/DateUtil.js}"></script> -->
 
@@ -46,13 +47,16 @@
             </div> -->
 
             <div class="row pull-right">
-                <button type="button" name="addRecord" class="btn btn-primary" data-toggle="modal" data-target="#myModal">添加</button>
+                <button type="button" name="addRecord" class="btn btn-primary" data-toggle="modal" data-target="#recordModal">添加</button>
+                <button type="button" name="updateRecord" class="btn btn-danger" data-toggle="modal" data-target="#recordModal">修改</button>
+                <button type="button" name="delRecord" class="btn btn-danger">删除</button>
             </div>
             <div class="row">
                 <!-- 数据 -->
                 <table class="table table-bordered table-striped table-condensed">
                     <thead>
                         <tr>
+                            <td>选择</td>
                             <td>序号</td>
                             <td>schema</td>
                             <td>表英文名</td>
@@ -64,6 +68,10 @@
                     </thead>
                     <tbody>
                         <tr th:each="model,iterStat : ${modelList}">
+                            <td>
+                                <input type="checkbox" name="checkboxModel" th:value="${model}" />
+                                <!-- <input type="hidden" name="checkboxstatdt" th:value="${task.id.statDt}" /> -->
+                            </td>
                             <td th:text="${iterStat.count}">
                                 
                             </td>
@@ -93,12 +101,10 @@
         </div>
 
 
-        <!-- javascript -->
-        <script th:src="@{js/modelList.js}"></script>
     </form>
 
     <!-- 添加记录 模态框 -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -142,6 +148,8 @@
         </div>
         <!-- /.modal -->
     </div>
+
+    
 </body>
 
 </html>
